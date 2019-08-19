@@ -4,7 +4,12 @@
   "private": true,
   "dependencies": {
     "antd": "^3.19.8",
+    "axios": "^0.19.0",
+    "http-proxy-middleware": "^0.19.1",
     "immutable": "^4.0.0-rc.12",
+    "jquery": "^3.4.1",
+    "moment": "^2.24.0",
+    "qs": "^6.7.0",
     "react": "^16.8.6",
     "react-dom": "^16.8.6",
     "react-redux": "^7.1.0",
@@ -13,6 +18,7 @@
     "redux": "^4.0.1",
     "redux-immutable": "^4.0.0",
     "redux-thunk": "^2.3.0",
+    "store": "^2.0.12",
     "styled-components": "^4.3.2"
   },
   "scripts": {
@@ -22,7 +28,10 @@
     "eject": "react-scripts eject"
   },
   "eslintConfig": {
-    "extends": "react-app"
+    "extends": "react-app",
+    "rules": {
+      "jsx-a11y/anchor-is-valid": "off"
+    }
   },
   "browserslist": {
     "production": [

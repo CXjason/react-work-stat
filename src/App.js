@@ -1,22 +1,30 @@
 
 
-import React from 'react';
-import { BrowserRouter,Route } from 'react-router-dom';
+import React,{Component} from 'react';
+import { Route,HashRouter,Redirect,Switch } from 'react-router-dom';
 import { Provider } from 'react-redux';
 
 import store from './store';
 
 import Home from './pages/home/index.js';
+import Login from './pages/login/index.js';
 
 
-function App() {
-  return (
-    <Provider store={store}>
-      <BrowserRouter>
-      	<Route path="/" exact component={Home}></Route>
-      </BrowserRouter>
-    </Provider>
-  );
+class App extends Component{
+
+	render(){
+
+		return (
+			<Provider store={store}>
+		      <HashRouter>
+			      	<Redirect to="/login"/>
+			      	<Route path="/home" component={Home}></Route>
+			      	<Route path="/login" exact component={Login}></Route>
+		      </HashRouter>
+		    </Provider>
+		)
+	}
 }
+
 
 export default App;

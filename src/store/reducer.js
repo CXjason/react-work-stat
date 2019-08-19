@@ -5,9 +5,11 @@
 import { combineReducers } from 'redux-immutable';
 
 import { reducer as homeReducer } from '../pages/home/store';
+import { reducer as LoginReducer } from '../pages/login/store/';
 
 const reducer = combineReducers({
-	home:homeReducer
+	home:homeReducer,
+	login:LoginReducer
 });
 
 

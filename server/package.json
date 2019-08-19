@@ -1,0 +1,38 @@
+{
+  "name": "project-stat",
+  "version": "1.0.0",
+  "description": "A backend for lottery",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "supervisor node index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/frank994/Loterry-node.git"
+  },
+  "keywords": [
+    "node"
+  ],
+  "author": "frank-wu",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/frank994/Loterry-node/issues"
+  },
+  "homepage": "https://github.com/frank994/Loterry-node#readme",
+  "dependencies": {
+    "koa": "^2.5.1",
+    "koa-bodyparser": "^4.2.1",
+    "koa-mysql-session": "^0.0.2",
+    "koa-router": "^7.4.0",
+    "koa-session-minimal": "^3.0.4",
+    "koa-static": "^4.0.3",
+    "koa-views": "^6.1.4",
+    "koa2-cors": "^2.0.6",
+    "md5": "^2.2.1",
+    "moment": "^2.22.1",
+    "mysql": "^2.15.0",
+    "supervisor": "^0.12.0"
+  },
+  "devDependencies": {}
+}

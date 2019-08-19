@@ -28,6 +28,7 @@ export const GlobalStyle = createGlobalStyle`
 		font: inherit;
 		vertical-align: baseline;
 	}
+
 	/* HTML5 display-role reset for older browsers */
 	article, aside, details, figcaption, figure, 
 	footer, header, hgroup, menu, nav, section {
@@ -52,11 +53,6 @@ export const GlobalStyle = createGlobalStyle`
 		border-spacing: 0;
 	}
 
-	#root{
-		width:100%;
-		height:100%;
-	}
-
 
 	@font-face {
 	    font-family: "iconfont";
@@ -73,6 +69,37 @@ export const GlobalStyle = createGlobalStyle`
 	    font-style:normal;
 	    -webkit-font-smoothing: antialiased;
 	    -moz-osx-font-smoothing: grayscale;
+	  };
+
+	  html,body{
+	  	width:100%;
+	  	height:100%;
+	  	overflow:hidden;
+	  }
+
+	  #root{
+	  	width:100%;
+	  	height:100%;
+	  	overflow:hidden;
+	  }
+
+	  .fl{
+	  	float:left;
+	  }
+	  .fr{
+	  	float:right;
+	  }
+
+	  .clearfix{
+	  	zoom:1;
+	  }
+
+	  .clerfix:after{
+	  	content:" ";
+	  	display:block;
+	  	height:0;
+	  	clear:both;
+
 	  }
 
 `
