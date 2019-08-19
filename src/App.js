@@ -12,14 +12,24 @@ import Login from './pages/login/index.js';
 
 class App extends Component{
 
-	render(){
+	constructor(props){
+		super(props)
+	}
 
+	componentDidMount(){
+
+	}
+
+	render(){
 		return (
 			<Provider store={store}>
 		      <HashRouter>
-			      	<Redirect to="/login"/>
-			      	<Route path="/home" component={Home}></Route>
+
+		      	<Switch>
+				  	<Route path="/home" component={Home}></Route>
 			      	<Route path="/login" exact component={Login}></Route>
+			      	<Redirect from='/' to='/login' />
+				</Switch>_
 		      </HashRouter>
 		    </Provider>
 		)

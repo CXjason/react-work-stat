@@ -123,13 +123,14 @@ class TaskList extends PureComponent{
 			      		? <Button style={ListTableAction} size="small" type="primary" onClick={() => this.finishTaskClick(text, record,'2')}>审核</Button> : ''
 			      	}
 			      	{
-			      		userInfo.auth_key == 'admin' || record.publisher_person_pk == userInfo.pk ? (
-			      				<Fragment>
-				      				<Button style={ListTableAction} size="small" type="primary" onClick={() => {this.editTaskClick(text, record)}}>编辑</Button>
-				      				<Button style={ListTableAction} size="small" type="danger" onClick={() => {this.removeTaskClick(text,record)}}>删除</Button>
-			      				</Fragment>
-			      			) : ''
+			      		this.state.finishStatus == 0 && (userInfo.auth_key == 'admin' || record.publisher_person_pk == userInfo.pk) 
+			      		? <Button style={ListTableAction} size="small" type="primary" onClick={() => {this.editTaskClick(text, record)}}>编辑</Button> : ""
 			      	}
+			      	{
+			      		(this.state.finishStatus == 0 && record.publisher_person_pk == userInfo.pk) || (userInfo.auth_key == 'admin') 
+			      		? <Button style={ListTableAction} size="small" type="danger" onClick={() => {this.removeTaskClick(text,record)}}>删除</Button> : ""
+			      	}
+
 			      	
 			      </span>
 			    ),
@@ -424,9 +425,14 @@ class TaskList extends PureComponent{
 
 						}
 					</div>
-					<div className="btns-right fr">
-						 <Button type="primary" size="small" onClick={this.showAddModal}>添加</Button>
-					</div>
+					{
+						newUserInfo.auth_key == "admin" ? (
+							<div className="btns-right fr">
+								 <Button type="primary" size="small" onClick={this.showAddModal}>发布任务</Button>
+							</div>
+						) : ""
+					}
+					
 				</HeaderNav>
 				<MainContent>
 					<Table dataSource={taskListData} columns={this.state.columns} scroll={{ x: 1900,y:1500}}/>

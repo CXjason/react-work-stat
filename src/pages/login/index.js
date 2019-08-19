@@ -40,11 +40,6 @@ class Login extends PureComponent{
 	componentDidMount(){
 
 		this.initUsernamePwd();
-
-		
-
-
-
 	}
 
 

@@ -3,7 +3,7 @@
 
 import React,{ PureComponent } from 'react';
 
-import { HashRouter,Route } from 'react-router-dom';
+import { HashRouter,Route,Switch,Redirect } from 'react-router-dom';
 
 import {
 	RightContentWrapper,
@@ -27,7 +27,12 @@ class RightContent extends PureComponent{
 				<RightContentWrapper>
 
 					<HashRouter>
-						<Route path="/home/taskList" exact component={TaskList}></Route>
+
+						<Switch>
+							<Route path="/home/taskList" exact component={TaskList}></Route>
+							<Redirect from="/home" to="/home/taskList" />
+						</Switch> 
+						
 					</HashRouter>
 
 				</RightContentWrapper>

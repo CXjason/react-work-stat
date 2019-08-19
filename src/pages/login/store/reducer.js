@@ -11,7 +11,6 @@ const defaultState = fromJS({
 	userInfo:userInfo,  // 用户信息
 });
 
-
 export default (state=defaultState,action) => {
 
 	switch(action.type){
