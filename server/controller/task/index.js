@@ -43,17 +43,17 @@ const taskList = val => {
 
 	for(let item in val){
 
-		where += item + "=" + val[item] + ","
+		where += item + "=" + val[item] + " and "
 	};
 
-	// 
+	// 条件
 	if(where != ""){
 		// 去掉最后一个逗号
-		where = where.slice(0,-1);
+		where = where.slice(0,-5);
 		where = "WHERE " + where;
 	}
 
-	const sql = "SELECT * FROM task " + where;
+	const sql = "SELECT * FROM task " + where + " ORDER BY create_time DESC";
 	return query(sql);
 };
 
@@ -71,6 +71,7 @@ const addTaskItem = val => {
 	let estimate_time = val.estimate_time || "";
 	let finish_preson = val.finish_preson || "";
 	let finish_preson_pk = val.finish_preson_pk || "";
+	let urgent_status = val.urgent_status || "";
 
 
 
@@ -86,8 +87,9 @@ const addTaskItem = val => {
 				department,
 				estimate_time,
 				finish_preson,
-				finish_preson_pk
-			) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)`;
+				finish_preson_pk,
+				urgent_status
+			) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)`;
 
 	let sqlParams = [
 						publisher_person,
@@ -102,6 +104,7 @@ const addTaskItem = val => {
 						estimate_time,
 						finish_preson,
 						finish_preson_pk,
+						urgent_status
 					];
 
 	return query(sql,sqlParams);
@@ -118,10 +121,14 @@ const updateTaskItem = val => { // 修改一条任务
 	let project_name = val.project_name || "";
 	let project_pk = val.project_pk || "";
 	let department = val.department || "";
-	let estimate_time = val.estimate_time || "";
-	let finish_time = val.finish_time || "";
+	let estimate_time = val.estimate_time || null;
+	let finish_time = val.finish_time || null;
+	let finish_leav_msg = val.finish_leav_msg || "";
+	let examine_time = val.examine_time || null;
+	let examine_leav_msg = val.examine_leav_msg || "";
 	let finish_preson = val.finish_preson || "";
 	let finish_preson_pk = val.finish_preson_pk || "";
+	let urgent_status = val.urgent_status || "";
 
 	let keyArr = {
 		publisher_person,
@@ -134,8 +141,12 @@ const updateTaskItem = val => { // 修改一条任务
 		department,
 		estimate_time,
 		finish_time,
+		finish_leav_msg,
+		examine_time,
+		examine_leav_msg,
 		finish_preson,
-		finish_preson_pk
+		finish_preson_pk,
+		urgent_status
 	};
 
 	
@@ -187,6 +198,7 @@ const updateTaskItem = val => { // 修改一条任务
 	// 	finish_preson_pk,
 	// 	pk,
 	// ];
+
 
 	return query(sql,sqlParams);
 

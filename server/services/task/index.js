@@ -76,6 +76,7 @@ exports.taskList = async ctx => { // 获取 任务列表
 			formatDataTime(result,"create_time");
 			formatDataTime(result,"estimate_time");
 			formatDataTime(result,"finish_time");
+			formatDataTime(result,"examine_time");
 
 
 			res = success(result);

@@ -7,7 +7,11 @@ let formatDataTime = function(arrData,key,format="YYYY-MM-DD HH:mm:ss"){
 
 	arrData.forEach(item => {
 
-		item[key] = moment(item[key]).format(format);
+		if(item[key]){
+			item[key] = moment(item[key]).format(format);
+		};
+
+		
 	})
 };
 

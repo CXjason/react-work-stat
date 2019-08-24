@@ -12,7 +12,9 @@ import {
 } from '../style.js';
 
 
-//import { connect } from 'react-redux';
+import { connect } from 'react-redux';
+
+import { NavLink } from 'react-router-dom';
 
 
 
@@ -31,7 +33,22 @@ class LeftMenu extends PureComponent{
 		this.props.history.push("/home/taskList");
 	}
 
+	toMyTaskListPage = () => { // 跳转到我的任务列表页面
+
+		this.props.history.push("/home/myTaskList");
+	}
+
+	toReleaseTaskListPage = () => { // 跳转到我发布的任务列表页面
+
+		this.props.history.push("/home/myReleaseTaskList");
+	}
+
 	render(){
+
+		let { userInfo } = this.props;
+		userInfo = userInfo.toJS();
+
+
 		return (
 
 
@@ -42,12 +59,21 @@ class LeftMenu extends PureComponent{
 							logo
 						</div>
 						<ul className="list">
-							<li className="list-item" onClick={this.toTaskListPage}>
+							<NavLink className="list-item" to="/home/taskList" activeClassName="selected">
 								<span>任务列表</span>
-							</li>
-							<li className="list-item">
+							</NavLink>
+							{
+								userInfo.auth_pk != 3 ? (
+									<NavLink className="list-item" to="/home/myReleaseTaskList" activeClassName="selected">
+										<span>我的发布</span>
+									</NavLink>
+								) : ""
+
+							}
+							
+							<NavLink className="list-item" to="/home/myTaskList" activeClassName="selected">
 								<span>我的任务</span>
-							</li>
+							</NavLink>
 						</ul>
 
 					</LeftMenuTop>
@@ -64,4 +90,10 @@ class LeftMenu extends PureComponent{
 }
 
 
-export default LeftMenu;
+const mapState = (state) => ({
+
+	userInfo:state.getIn(['login','userInfo'])
+})
+
+
+export default connect(mapState,null)(LeftMenu);

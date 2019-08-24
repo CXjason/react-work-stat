@@ -85,6 +85,7 @@ import {
 		          })(
 		          	<Select
 		          		defaultActiveFirstOption={true}
+		          		disabled
 		          	>
 		          		{
 		          			userList.map((item) => {
@@ -212,6 +213,24 @@ import {
 		          				
 		          			})
 		          		}
+				      
+				    </Select>
+
+		          )}
+		        </FormItem>
+		        <FormItem label="紧急程度">
+		          {getFieldDecorator('urgent_status', {
+		            initialValue:data.urgent_status,
+		            rules:[
+		          		{ required: true, message: '必填' },
+		          	]
+		          })(
+		          	<Select
+		          		defaultActiveFirstOption={true}
+		          	>
+		          		<Option key="1" value={1}>紧急</Option>
+		          		<Option key="2" value={2}>一般</Option>
+		          		<Option key="3" value={3}>不急</Option>
 				      
 				    </Select>
 

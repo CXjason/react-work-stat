@@ -13,23 +13,28 @@ import {
 //import { connect } from 'react-redux';
 
 import TaskList from '../../taskList/index.js';
+import MyTaskList from '../../myTaskList/index.js';
+import MyReleaseTaskList from '../../MyReleaseTaskList';
 
 
 class RightContent extends PureComponent{
 
-	// constructor(props){
-	// 	super(props);
+	constructor(props){
+		super(props);
 
-	// }
+	}
 
 	render(){
+
 		return (
 				<RightContentWrapper>
 
 					<HashRouter>
 
 						<Switch>
-							<Route path="/home/taskList" exact component={TaskList}></Route>
+							<Route path="/home/myTaskList" component={MyTaskList}></Route>
+							<Route path="/home/myReleaseTaskList" component={MyReleaseTaskList}></Route>
+							<Route path="/home/taskList" component={TaskList}></Route>
 							<Redirect from="/home" to="/home/taskList" />
 						</Switch> 
 						

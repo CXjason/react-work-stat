@@ -24,7 +24,6 @@ class App extends Component{
 		return (
 			<Provider store={store}>
 		      <HashRouter>
-
 		      	<Switch>
 				  	<Route path="/home" component={Home}></Route>
 			      	<Route path="/login" exact component={Login}></Route>

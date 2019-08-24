@@ -34,6 +34,23 @@ export const LayerWrapper = styled.div`
 	top:0;
 	background-color:#333;
 
+	.wr-box{
+		height:100%;
+		line-height:60px;
+
+		.rig-wr{
+			padding-right:18px;
+			color:#fff;
+			line-height:60px;
+			color:#fff;
+			font-size:13px;
+
+			.username{
+				font-size:14px;
+			}
+		}
+	}
+
 `;
 
 
@@ -76,6 +93,8 @@ export const LeftMenuTop = styled.div`
 
 		.list-item{
 
+			display:block;
+
 			span{
 				display:block;
 				text-align:center;
@@ -84,6 +103,10 @@ export const LeftMenuTop = styled.div`
 				color:#fff;
 				cursor:pointer;
 			}
+		}
+
+		.selected{
+			background-color:#1890ff;
 		}
 	}
 
