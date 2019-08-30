@@ -21,14 +21,6 @@ const departmentList = val => {
 	return query(sql);
 };
 
-
-// 获取项目列表
-const projectList = val => {
-
-	const sql = "SELECT * FROM project";
-	return query(sql);
-};
-
 // 获取职位列表
 const ranksList = val => {
 
@@ -41,19 +33,52 @@ const taskList = val => {
 
 	let where = "";
 
+
+
 	for(let item in val){
 
-		where += item + "=" + val[item] + " and "
+		if(
+			item != "estimate_start" && 
+			item != "estimate_end" && 
+			item != "finishTime_start" && 
+			item != "finishTime_end" &&
+			item != "searchVal"
+		){
+
+			where += item + "=" + val[item] + " and ";
+		}
 	};
+
+
 
 	// 条件
 	if(where != ""){
 		// 去掉最后一个逗号
 		where = where.slice(0,-5);
 		where = "WHERE " + where;
-	}
+	};
+
+	// 搜索内容
+	let searchVal = val["searchVal"] || "";
+	if(searchVal){
+		where += " AND (task_content LIKE '%"+searchVal+"%')";
+	};
+	
+
+	// 预计完成时间范围搜索
+	if(val["estimate_start"] && val["estimate_end"]){
+
+		where += " and estimate_time between '" + val["estimate_start"] + "' and '" + val["estimate_end"] + "'";
+	};
+
+	// 完成时间范围搜索
+	if(val["finishTime_start"] && val["finishTime_end"]){
+
+		where += " and finish_time between '" + val["finishTime_start"] + "' and '" + val["finishTime_end"] + "'";
+	};
 
 	const sql = "SELECT * FROM task " + where + " ORDER BY create_time DESC";
+
 	return query(sql);
 };
 
@@ -218,7 +243,6 @@ let removeTaskItem = val => { // 删除一条任务
 module.exports = {
   list,
   departmentList,
-  projectList,
   ranksList,
   taskList,
   addTaskItem,

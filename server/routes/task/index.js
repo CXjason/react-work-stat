@@ -4,7 +4,6 @@ const methods = require('../methods')
 
 let model = {
 	'departmentList': { method: methods.post },
-	"projectList":{method:methods.post},
 	"ranksList":{method:methods.get},
 	"taskList":{method:methods.post},
 	"addTaskItem":{method:methods.post},

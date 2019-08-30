@@ -55,6 +55,7 @@
     "react-dom": "^16.8.6",
     "react-keeper": "^2.1.12",
     "react-redux": "^7.1.0",
+    "react-router-cache-route": "^1.5.0",
     "react-router-dom": "^5.0.1",
     "redux": "^4.0.1",
     "redux-immutable": "^4.0.0",

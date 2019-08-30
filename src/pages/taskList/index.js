@@ -41,6 +41,7 @@ class TaskList extends PureComponent{
 			<TaskListWrapper>
 				<TaskListCom
 					getTaskListParams={{}}
+					taskPageMode="all"
 				></TaskListCom>
 			</TaskListWrapper>
 		)

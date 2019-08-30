@@ -8,7 +8,8 @@ const pojo = require('../../helper/pojo');
 const { success, failed } = pojo;
 const taskController = require("../../controller/task/index.js");
 const { 
-	formatDataTime
+	formatDataTime,
+	otherLast
 }  = require("../../utils/tools.js");
 
 
@@ -27,24 +28,6 @@ exports.departmentList = async ctx => { // 获取部门列表
       ctx.body = res
 };
 
-
-exports.projectList = async ctx => { // 获取项目列表
-
-	let res;
-	try{
-
-		await taskController.projectList().then(result => {
-
-			res = success(result);
-		});
-
-	}catch(err){
-
-		res = failed(err);
-	};
-
-	ctx.body = res;
-};
 
 exports.ranksList = async ctx => { // 获取 职位列表
 

@@ -21,8 +21,12 @@ import {
 	Carousel,
 	Input,
 	Form,
-	Select
+	Select,
+	DatePicker,
+	message,
 } from 'antd';
+
+import dataPickerLocale from 'antd/es/date-picker/locale/zh_CN';
 
 import AddTaskForm from './common/addTaskForm.js';
 
@@ -35,11 +39,14 @@ import moment from 'moment';
 
 import api from '../../../fetchs/apis.js';
 
+import { ipconfig } from '../../../fetchs/urls.js';
+
 import { actionCreators } from '../../home/store';
 
 const { Option } = Select;
 const { confirm } = Modal;
 const { TextArea } = Input;
+const { RangePicker } = DatePicker;
 const FormItem = Form.Item;
 
 
@@ -210,6 +217,14 @@ class TaskList extends PureComponent{
 			finishConfirmData:{},// 完成的数据
 			showTaskModalData:{},// 查看任务的数据
 			showTaskModal:false,// 查看任务的modal
+			searchDepartment:"all",//搜索的部门pk
+			searchReleaseUser:"all",//搜索的发布人的pk
+			searchFinishUser:"all",//搜索的完成人的pk
+			searchProject:"all",//搜索的项目的pk
+			searchEstimateTime:[],// 搜索项目的预计完成时间
+			searchFinishTime:[],// 搜索项目的完成时间
+			searchVal:"",// 搜索任务内容的值
+			selectedTaskRowKeys:"",// 任务行的选择
 		};
 
 		this.addTaskOk = this.addTaskOk.bind(this);
@@ -230,13 +245,43 @@ class TaskList extends PureComponent{
 
 	}
 
-	componentWillReceiveProps(nextProps) { // 父组件重传props时就会调用这个方法
+	static getDerivedStateFromProps(nextProps,nextState) { // 父组件重传props时就会调用这个方法
+
+		let ret = {};
+
+		
+		let userInfo = nextProps.userInfo.toJS();
+		// let userList = nextProps.userList.toJS();
+
+		// 初始化 搜索部门的值
+		if(nextState.searchDepartment == "all"){
+			let searchDepartment = userInfo.department_pk ? parseInt(userInfo.department_pk) : "";
+			ret["searchDepartment"] = searchDepartment;
+		};
+
+		// // 初始化 搜索发布人的值
+
+		// if(!nextState.searchReleaseUser){
+
+		// 	// 找到部门的负责人
+		// 	for(let item of userList){
+
+		// 		// 同一个部门
+		// 		if(item.department_pk == userInfo.department_pk && (userInfo.auth_pk == 2)){
+
+		// 			let searchReleaseUser = item.pk;
+		// 			ret["searchReleaseUser"] = searchReleaseUser;
+		// 			break;
+		// 		};
+		// 	}
+
+		// };
+
+		// 初始化该组件的参数
+		ret["getTaskListParams"] = nextProps.getTaskListParams;
+
+		return ret;
         
-        this.setState({getTaskListParams: nextProps.getTaskListParams});
-    }
-
-    componentDidUpdate(prevProps,prevState){
-
     }
 
 	fetchAddTaskItem = (params) => { // 新增一条任务
@@ -260,8 +305,20 @@ class TaskList extends PureComponent{
 
 	fetchTaskList = () => { // 获取任务列表
 
+		let {
+			searchDepartment,
+			searchReleaseUser,
+			searchFinishUser,
+			searchProject,
+			searchEstimateTime,
+			searchFinishTime,
+			searchVal,
+		} = this.state;
+
+
 		let params = {
-			...this.state.getTaskListParams
+			...this.state.getTaskListParams,
+			searchVal
 		};
 
 		let  finishStatus = this.state.finishStatus;
@@ -269,11 +326,53 @@ class TaskList extends PureComponent{
 			params["is_finish"] = finishStatus;
 		};
 
+		// 搜索条件
+		// 部门
+		if(searchDepartment != "all"){
+			params["department_pk"] = searchDepartment;
+		};
+
+		// 发布人
+		if(searchReleaseUser != "all"){
+			params["publisher_person_pk"] = searchReleaseUser;
+		};
+
+		// 完成人
+		if(searchFinishUser != "all"){
+			params["finish_preson_pk"] = searchFinishUser;
+		};
+
+		// 项目
+		if(searchProject != "all"){
+			params["project_pk"] = searchProject;
+		};
+
+		// 预计完成时间
+		if(searchEstimateTime.length == 2){
+
+			let estimate_start = moment(searchEstimateTime[0]).format("YYYY-MM-DD") + " 00:00:00";
+			let estimate_end = moment(searchEstimateTime[1]).format("YYYY-MM-DD") + " 23:59:59";
+
+			params["estimate_start"] = estimate_start;
+			params["estimate_end"] = estimate_end;
+
+		};
+
+		// 完成时间
+		if(searchFinishTime.length == 2){
+
+			let finishTime_start = moment(searchFinishTime[0]).format("YYYY-MM-DD") + " 00:00:00";
+			let finishTime_end = moment(searchFinishTime[1]).format("YYYY-MM-DD") + " 23:59:59";
+
+			params["finishTime_start"] = finishTime_start;
+			params["finishTime_end"] = finishTime_end;
+
+		};
+
+
 		api.getTaskList(params).then(res => {
 			console.log("获取任务列表");
 			console.log(res);
-
-			//taskListData
 
 			if(res.data.code == 0){
 
@@ -541,8 +640,8 @@ class TaskList extends PureComponent{
 
 		let userInfo = this.props.userInfo.toJS();
 		return{
-			publisher_person_pk:userInfo.pk,
-			department_pk:"",
+			publisher_person_pk:userInfo.pk ? parseInt(userInfo.pk) : 0,
+			department_pk:userInfo.department_pk ? parseInt(userInfo.department_pk) : "",
 			finish_preson_pk:"",
 			finish_time:"",
 			project_pk:"",
@@ -616,9 +715,152 @@ class TaskList extends PureComponent{
 		})
 	}
 
+	changeSearchDepartment = (val) => { // 部门搜索值改变
+
+
+		// 如果发布人不是该部门则改为无限
+		let { userList,projectList} = this.props;
+		userList = userList.toJS();
+		projectList = projectList.toJS();
+		let { searchReleaseUser,searchFinishUser,searchProject } = this.state;
+
+		for(let item of userList){
+
+			// 发布人
+			if(item.pk == searchReleaseUser && item.department_pk != val){
+				this.setState({
+					searchReleaseUser:"all"
+				});
+			}
+
+			// 完成人 
+			if(item.pk == searchFinishUser && item.department_pk != val){
+				this.setState({
+					searchFinishUser:"all"
+				});
+			}
+		};
+
+		// 如果项目的部门pk跟选择部门pk不匹配值清空
+		for(let item of projectList){
+
+			if(item.pk == searchProject && item.department_pk != val){
+
+				this.setState({
+					searchProject:"all"
+				});
+				break;
+			}
+		};
+
+		this.setState({
+			searchDepartment:val
+		},() => {
+			this.fetchTaskList();
+		});
+
+	}
+
+	changeSearchReleaseUser = (val) => { //  发布人搜索值改变
+
+		this.setState({
+			searchReleaseUser:val
+		},() => {
+			this.fetchTaskList();
+		});
+
+
+	}
+
+	changeSearchFinishUser = (val) => { //  完成人搜索值改变
+
+		this.setState({
+			searchFinishUser:val
+		},() => {
+			this.fetchTaskList();
+		});
+	}
+
+	changeSearchProject = (val) => { // 项目搜索值改变
+		this.setState({
+			searchProject:val
+		},() => {
+			this.fetchTaskList();
+		});
+	}
+
+	// 预计完成时间
+	changeSearchEstimateTime = (val) => { // 预计完成搜索值改变
+
+		this.setState({
+			searchEstimateTime:val
+		},() => {
+			this.fetchTaskList();
+		});
+	}
+
+	changeSearchFinishTime = (val) => { // 
+
+		this.setState({
+			searchFinishTime:val
+		},() => {
+			this.fetchTaskList();
+		});
+	}
+
+	changeSearchVal = (event) => { // 搜索值改变
+
+		let val = event.target.value;
+
+		this.setState({
+			searchVal:val
+		})
+	}
+
+	pressEnterSearchVal = (event) => { // 搜索值回车
+
+		event.persist();
+
+		this.fetchTaskList();
+
+	}
+
+
+	exportTaskXlsx = () => { // 导出任务的xlsx表
+
+		if(this.state.selectedTaskRowKeys.length == 0){
+
+			message.warning("请先选中任务！");
+			return;
+		}
+
+		let params = {
+			data:this.state.selectedTaskRowKeys
+		};
+
+		api.getTaskExportXlsx(params).then(res => {
+
+			console.log("导出文件");
+			console.log(res);
+
+			if(res.data.code == 0){
+
+				const a = document.createElement('a'); // 创建a标签
+				a.setAttribute('download', '');// download属性
+				a.setAttribute('href', ipconfig + "" + res.data.data);// href链接
+				a.click();// 自执行点击事件
+			}
+
+		}).catch(err => {
+			console.log(err);
+		})
+	}
+
 	render(){
 
-		const { userInfo } = this.props;
+
+		//taskPageMode ： 页面的模式  (myFinishTask:我完成的，all：所有，myReleaseTask：我发布的)
+		const { userInfo,departmentList,userList,taskPageMode,projectList } = this.props;
 		const newUserInfo = userInfo.toJS();
 
 		let { 
@@ -626,7 +868,12 @@ class TaskList extends PureComponent{
 			taskOperaModel, 
 			taskListData, 
 			overtimeTaskData, 
-			showTaskModalData 
+			showTaskModalData,
+			searchDepartment,
+			searchReleaseUser,
+			searchFinishUser,
+			searchProject,
+			searchVal,
 		} = this.state;
 
 		const formItemLayout = {
@@ -641,11 +888,28 @@ class TaskList extends PureComponent{
 	     
 	    };
 
+	    const rowSelection = {
+		  	onChange: (selectedRowKeys, selectedRows) => {
+		    	//console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
+
+		    	this.setState({
+		    		selectedTaskRowKeys:selectedRows
+		    	});
+		  	},
+		  	onSelect: (record, selected, selectedRows) => {
+		    	//console.log(record, selected, selectedRows);
+		  	},
+		  	onSelectAll: (selected, selectedRows, changeRows) => {
+		    	//console.log(selected, selectedRows, changeRows);
+		  	},
+		};
+
 
 		return (
 			<TaskListWrapper>
 
 				{
+					// 任务即将超时提醒
 					overtimeTaskData.length > 0 ? (
 						<NoticeWrapper>
 							<Carousel
@@ -658,6 +922,7 @@ class TaskList extends PureComponent{
 
 							    		let task_content = item.task_content;
 
+							    		// 如果内容大于30个字符则将 取前30个
 							    		if(task_content.length > 30){
 							    			task_content = task_content.slice(0,30) + "......";
 							    		};
@@ -676,35 +941,208 @@ class TaskList extends PureComponent{
 					) : ""
 				}
 				
-				<HeaderNav className="clearfix">
-					<div className="btns-wrapper fl">
+				<HeaderNav>
+					<div className="header-item clearfix">
+						<div className="btns-wrapper fl">
+							{
+								finishList.map((item,index) => {
+
+									return (
+										<div className="btns-item" key={item.value}>
+											<Button 
+												type={this.state.finishStatus === item.value ? 'primary' : ''} 
+												size="small"
+												onClick={()=> this.switFinishStatusFn(item)}
+											>{item.label}</Button>
+										</div>
+									)
+								})
+
+							}
+						</div>
+
 						{
-							finishList.map((item,index) => {
+							
+							/* 如果为任务列表才显示 */
+							taskPageMode == "all" ? (
 
-								return (
-									<div className="btns-item" key={item.value}>
-										<Button 
-											type={this.state.finishStatus === item.value ? 'primary' : ''} 
+								<div className="filter-search-wr fl">
+									<div className="search-item">
+										<span className="tit">部门：</span>
+										<Select 
 											size="small"
-											onClick={()=> this.switFinishStatusFn(item)}
-										>{item.label}</Button>
-									</div>
-								)
-							})
+											value={searchDepartment}
+											onChange={this.changeSearchDepartment}
+											style={{width:"120px"}}
+										>
+											<Option key="不限" value="all">不限</Option>
+											{
+												departmentList.map(item => {
+													
+													return(
+														<Option key={item.pk} value={item.pk}>{item.name}</Option>
+													)
 
+												})
+											}
+										</Select>
+									</div>
+
+									<div className="search-item">
+										<span className="tit">发布人：</span>
+										<Select
+											size="small"
+											value={searchReleaseUser}
+											onChange={this.changeSearchReleaseUser}
+											style={{width:"100px"}}
+										>
+
+											<Option key="不限" value="all">不限</Option>
+											{
+											
+												userList.map(item => {
+
+													let opt = "";
+													
+													
+													// 只显示管理层
+													if(searchDepartment == "all"){
+														if(item.auth_pk == 2){
+															opt = <Option key={item.pk} value={item.pk}>{ item.username }</Option>
+														}
+													}else{
+														if(item.auth_pk == 2 && item.department_pk == searchDepartment){
+															opt = <Option key={item.pk} value={item.pk}>{ item.username }</Option>
+														}
+													}
+													return (opt);
+												})
+											}
+										</Select>
+									</div>
+
+									<div className="search-item">
+										<span className="tit">完成人：</span>
+										<Select
+											size="small"
+											value={searchFinishUser}
+											onChange={this.changeSearchFinishUser}
+											style={{width:"100px"}}
+										>
+
+											<Option key="不限" value="all">不限</Option>
+											{
+											
+												userList.map(item => {
+
+													let opt = "";
+
+													// 只显示管理层
+													if(searchDepartment == "all"){
+														opt = <Option key={item.pk} value={item.pk}>{ item.username }</Option>
+													}else{
+														if(item.department_pk == searchDepartment){
+															opt = <Option key={item.pk} value={item.pk}>{ item.username }</Option>
+														}
+													}
+
+													return (opt);
+												})
+											}
+										</Select>
+									</div>
+
+									<div className="search-item">
+										<span className="tit">项目：</span>
+										<Select 
+											size="small"
+											value={searchProject}
+											onChange={this.changeSearchProject}
+											style={{width:"140px"}}
+										>
+											<Option key="不限" value="all">不限</Option>
+											{
+												projectList.map(item => {
+
+													let opt = "";
+
+													if(searchDepartment == "all"){
+														opt = <Option key={item.pk} value={item.pk}>{item.name}</Option>
+													}else{
+														if(item.department_pk == searchDepartment || !item.department_pk){
+															opt = <Option key={item.pk} value={item.pk}>{item.name}</Option>
+														}
+													}
+													
+													return(
+														opt
+													)
+
+												})
+											}
+										</Select>
+									</div>
+
+									
+								</div>
+							) : ""
+						}
+
+						
+						{
+							newUserInfo.auth_key == "admin" ? (
+								<div className="btns-right fr">
+									<Button className="btn-item" type="primary" size="small" onClick={this.exportTaskXlsx}>导出xlsx</Button>
+									<Button className="btn-item" type="primary" size="small" onClick={this.showAddModal}>发布任务</Button>
+
+								</div>
+							) : ""
 						}
 					</div>
 					{
-						newUserInfo.auth_key == "admin" ? (
-							<div className="btns-right fr">
-								 <Button type="primary" size="small" onClick={this.showAddModal}>发布任务</Button>
+						taskPageMode == "all" ? (
+							<div className="header-item">
+								<div className="filter-search-wr">
+
+									<div className="search-item">
+										<span className="tit">预计完成时间：</span>
+										<RangePicker
+											locale={dataPickerLocale}
+											style={{width:"270px"}}
+											size="small"
+											onChange={this.changeSearchEstimateTime}
+										></RangePicker>
+									</div>
+
+									<div className="search-item">
+										<span className="tit">完成时间：</span>
+										<RangePicker
+											locale={dataPickerLocale}
+											style={{width:"270px"}}
+											size="small"
+											onChange={this.changeSearchFinishTime}
+										></RangePicker>
+									</div>
+
+									<div className="search-item">
+										<span className="tit">搜索内容：</span>
+										<Input 
+											size="small"
+											style={{width:"262px"}}
+											value={searchVal}
+											onPressEnter={this.pressEnterSearchVal}
+											onChange={this.changeSearchVal}
+										></Input>
+									</div>
+								</div>
 							</div>
 						) : ""
+
 					}
 					
 				</HeaderNav>
-				<MainContent>
-					<Table dataSource={taskListData} columns={this.state.columns} scroll={{ x: 2100,y:1500}}/>
+				<MainContent className={taskPageMode == 'all' ? 'act' : ''}>
+					<Table dataSource={taskListData} columns={this.state.columns} rowSelection={rowSelection} scroll={{ x: 2100,y:1500}}/>
 				</MainContent>
 					
 				{/* 添加任务模态框 */}

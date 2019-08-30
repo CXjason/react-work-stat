@@ -121,6 +121,7 @@ export const getProjectList = () => {
 			if(res.data.code == 0){
 
 				let result = res.data.data;
+				addDataKey(result,"key","pk");
 				dispatch(getProjectListAction(result));
 			}
 		})

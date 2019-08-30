@@ -141,5 +141,35 @@ export default {
     return fetch(urls.getRemoveTaskItemUrl,params);
   },
 
+  /*
+    添加项目
+  */
+
+  getAddProject(params){
+    return fetch(urls.getAddProjectUrl,params);
+  },
+
+
+  /*
+    修改项目
+  */
+
+  getUpdateProject(params){
+    return fetch(urls.getUpdateProjectUrl,params);
+  },
+
+  /*
+    导出任务的xlsx表
+    params = {
+  
+      data:"",// 任务数据
+    }
+  */
+
+  getTaskExportXlsx(params){
+
+    return fetch(urls.getTaskExportXlsxUrl,params);
+  },
+
 
 };

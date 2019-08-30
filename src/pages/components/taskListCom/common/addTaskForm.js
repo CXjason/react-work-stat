@@ -9,9 +9,7 @@ import moment from 'moment';
 import { 
 	Form,
 	Input,
-	Cascader,
 	Select,
-	AutoComplete,
 	DatePicker,
 	Button
  } from 'antd';
@@ -113,6 +111,7 @@ import {
 		          })(
 		          	<Select
 		          		defaultActiveFirstOption
+		          		disabled
 		          	>
 		          		{
 		          			departmentList.map((item) => {
@@ -165,9 +164,11 @@ import {
 		        			>
 		        				{
 		        					projectList.map((item,index) => {
-			          				
-				          				return (<Option key={item.pk} value={item.pk}>{item.name}</Option>)
 
+		        						let ret = <Option key={item.pk} value={item.pk}>{item.name}</Option>
+		        						
+				          				return (ret)
+	
 			        				})
 		        				}
 		        				
@@ -207,8 +208,17 @@ import {
 		          		{
 		          			userList.map((item) => {
 
+		          				let ret = "";
+
+		          				// 只能选同一个部门下的人
+		          				if(item.department_pk == data.department_pk){
+
+		          					ret = <Option key={item.pk} value={item.pk}>{item.username}</Option>
+		          				}
+
+
 		          				return (
-		          					<Option key={item.pk} value={item.pk}>{item.username}</Option>
+		          					ret
 		          				)
 		          				
 		          			})

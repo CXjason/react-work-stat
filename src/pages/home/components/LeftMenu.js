@@ -3,7 +3,7 @@
 
 
 
-import React,{ PureComponent } from 'react';
+import React,{ PureComponent,Fragment } from 'react';
 
 import {
 	LeftMenuWrapper,
@@ -59,21 +59,31 @@ class LeftMenu extends PureComponent{
 							logo
 						</div>
 						<ul className="list">
+						
 							<NavLink className="list-item" to="/home/taskList" activeClassName="selected">
 								<span>任务列表</span>
 							</NavLink>
-							{
-								userInfo.auth_pk != 3 ? (
-									<NavLink className="list-item" to="/home/myReleaseTaskList" activeClassName="selected">
-										<span>我的发布</span>
-									</NavLink>
-								) : ""
-
-							}
 							
 							<NavLink className="list-item" to="/home/myTaskList" activeClassName="selected">
 								<span>我的任务</span>
 							</NavLink>
+
+							{
+								userInfo.auth_pk != 3 ? (
+									<Fragment>
+										<NavLink className="list-item" to="/home/myReleaseTaskList" activeClassName="selected">
+											<span>我的发布</span>
+										</NavLink>
+										<NavLink className="list-item" to="/home/projectPage" activeClassName="selected">
+											<span>项目管理</span>
+										</NavLink>
+									</Fragment>
+								) : ""
+
+							}
+
+							
+
 						</ul>
 
 					</LeftMenuTop>

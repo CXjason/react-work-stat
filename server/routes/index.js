@@ -17,6 +17,8 @@ module.exports = (config => {
 })([
   'user',
   'task',
+  'project',
+  "tools"
 ]);
 
 

@@ -34,5 +34,8 @@
     "mysql": "^2.15.0",
     "supervisor": "^0.12.0"
   },
-  "devDependencies": {}
+  "devDependencies": {
+    "excel-export": "^0.5.1",
+    "node-xlsx": "^0.15.0"
+  }
 }

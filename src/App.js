@@ -2,12 +2,17 @@
 
 import React,{Component} from 'react';
 import { Route,HashRouter,Redirect,Switch } from 'react-router-dom';
+
+import {CacheRoute,CacheSwitch  } from 'react-router-cache-route';
 import { Provider } from 'react-redux';
 
 import store from './store';
 
 import Home from './pages/home/index.js';
 import Login from './pages/login/index.js';
+
+import "./App.css";
+
 
 
 class App extends Component{
@@ -24,11 +29,12 @@ class App extends Component{
 		return (
 			<Provider store={store}>
 		      <HashRouter>
-		      	<Switch>
-				  	<Route path="/home" component={Home}></Route>
+
+		      	<CacheSwitch>
+				  	<CacheRoute className="home-cache-route-page" path="/home" component={Home}></CacheRoute>
 			      	<Route path="/login" exact component={Login}></Route>
 			      	<Redirect from='/' to='/login' />
-				</Switch>_
+				</CacheSwitch>_
 		      </HashRouter>
 		    </Provider>
 		)

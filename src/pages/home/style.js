@@ -70,7 +70,6 @@ export const RightContentWrapper = styled.div`
 	height:100%;
 	position:relative;
 	overflow:hidden;
-	// background-color:yellow;
 `;
 
 

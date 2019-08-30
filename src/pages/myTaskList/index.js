@@ -25,6 +25,7 @@ class MyTaskList extends PureComponent{
 				
 				<TaskListCom
 					getTaskListParams={{finish_preson_pk:newUserInfo['pk']}}
+					taskPageMode="myFinishTask"
 				></TaskListCom>
 
 			</MyTaskListWrapper>

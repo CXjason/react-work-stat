@@ -25,6 +25,7 @@ class MyTaskList extends PureComponent{
 				
 				<TaskListCom
 					getTaskListParams={{publisher_person_pk:newUserInfo['pk']}}
+					taskPageMode="myReleaseTask"
 				></TaskListCom>
 
 			</MyTaskListWrapper>

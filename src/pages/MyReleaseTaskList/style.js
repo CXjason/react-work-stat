@@ -2,9 +2,7 @@
 
 import styled from 'styled-components';
 
-export const MyTaskListWrapper = styled.div`
-
-`;
+export const MyTaskListWrapper = styled.div``;
 
 
 
