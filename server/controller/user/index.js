@@ -4,6 +4,7 @@ const pool = require('../../lib/mysql')
 const { NtNUpdate } = require('../../helper')
 const { query } = pool
 const TYPES = require('../../enum');
+const moment = require("moment");
 
 // 新添用户
 const add = (val) => {
@@ -45,9 +46,63 @@ const login = val => { // 登录
 // 获取用户列表
 const userList = val => {
 
-  const sql = "select * from user";
+  const sql = "select * from user where status=1";
   return query(sql);
 };
+
+const addUser = val => {
+
+  let auth_key = val["auth_key"];
+  let auth_pk = val["auth_pk"];
+  let department_name = val["department_name"];
+  let department_pk = val["department_pk"];
+  let password = val["password"];
+  let phone = val["phone"];
+  let ranks_name = val["ranks_name"];
+  let ranks_pk = val["ranks_pk"];
+  let username = val["username"];
+  let status = 1;
+  let create_time = moment().format("YYYY-MM-DD HH:mm:ss");
+
+  let sql = `INSERT INTO user(
+              auth_key,
+              auth_pk,
+              department_name,
+              department_pk,
+              password,
+              phone,
+              ranks_name,
+              ranks_pk,
+              username,
+              status,
+              create_time
+            ) VALUES (?,?,?,?,?,?,?,?,?,?,?)`;
+
+  let sql_params = [ 
+              auth_key,
+              auth_pk,
+              department_name,
+              department_pk,
+              password,
+              phone,
+              ranks_name,
+              ranks_pk,
+              username,
+              status,
+              create_time
+            ];
+
+
+  return query(sql,sql_params);
+}
+
+
+let removeUser = val => {
+  const { pk } = val;
+  const sql = 'update user set status = 0 where pk = ?';
+  let sql_params = [pk];
+  return query(sql, sql_params);
+}
 
 module.exports = {
   add,
@@ -56,4 +111,6 @@ module.exports = {
   del,
   login,
   userList,
+  addUser,
+  removeUser,
 }

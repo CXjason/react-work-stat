@@ -17,6 +17,11 @@ const pojo = require('../../helper/pojo');
 const { success, failed } = pojo;
 const userController = require("../../controller/user/index.js");
 
+const { 
+	formatDataTime,
+	otherLast
+}  = require("../../utils/tools.js");
+
 
 exports.login = async ctx => {
 
@@ -48,6 +53,8 @@ exports.userList = async ctx => {
 		await userController.userList(val).then(result => {
 
 			let userList = result || [];
+
+			formatDataTime(userList,"create_time");
 			res = success(userList);
 		})
 
@@ -58,5 +65,39 @@ exports.userList = async ctx => {
 	ctx.body = res;
 }
 
+exports.addUser = async ctx => {
 
+	let res;
+	try{
+
+		const val = ctx.request.body;
+		await userController.addUser(val).then(result => {
+
+			res = success(result);
+		})
+	}catch(err){
+		res = failed(err);
+	};
+
+	ctx.body = res;
+}
+
+exports.removeUser = async ctx => {
+
+	let res;
+	try{
+
+		const val = ctx.request.body;
+		await userController.removeUser(val).then(result => {
+
+			res = success(result);
+		})
+	}catch(err){
+		res = failed(err);
+	};
+
+	ctx.body = res;
+
+	
+}
 

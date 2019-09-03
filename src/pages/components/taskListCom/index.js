@@ -43,6 +43,8 @@ import { ipconfig } from '../../../fetchs/urls.js';
 
 import { actionCreators } from '../../home/store';
 
+import $ from 'jquery';
+
 const { Option } = Select;
 const { confirm } = Modal;
 const { TextArea } = Input;
@@ -142,37 +144,37 @@ class TaskList extends PureComponent{
 			    	return (
 						<span>
 					      	{
-					      		this.state.finishStatus == 0 && 
+					      		record.is_finish == 0 &&
 					      		((userInfo.auth_key == 'admin' && (userInfo.department_pk == record.department_pk)) || record.finish_preson_pk == userInfo.pk) 
 					      		? <Button style={ListTableAction} size="small" type="primary" onClick={() => this.startTaskClick(text, record,'1')}>开始</Button> : ''
 					      	}
 					      	{
-					      		this.state.finishStatus == 1 && 
-					      		((userInfo.auth_key == 'admin' && (userInfo.department_pk == record.department_pk)) || record.finish_preson_pk == userInfo.pk) 
+					      		record.is_finish == 1 && 
+ 					      		((userInfo.auth_key == 'admin' && (userInfo.department_pk == record.department_pk)) || record.finish_preson_pk == userInfo.pk) 
 					      		? <Button style={ListTableAction} size="small" type="primary" onClick={() => this.startTaskClick(text, record,'0')}>停止</Button> : ''
 					      	}
 					      	{
-					      		this.state.finishStatus == 1 && 
+					      		record.is_finish == 1 && 
 					      		((userInfo.auth_key == 'admin' && (userInfo.department_pk == record.department_pk)) || record.finish_preson_pk == userInfo.pk)  
 					      		? <Button style={ListTableAction} size="small" type="primary" onClick={() => this.finishTaskClick(text, record,'2')}>完成</Button> : ''
 					      	}
 					      	{
-					      		this.state.finishStatus == 2 && (userInfo.auth_key == 'admin' && (userInfo.department_pk == record.department_pk))
+					      		record.is_finish == 2 && (userInfo.auth_key == 'admin' && (userInfo.department_pk == record.department_pk))
 					      		? <Button style={ListTableAction} size="small" type="primary" onClick={() => this.finishTaskClick(text, record,'3')}>审核</Button> : ''
 					      	}
 							<Button style={ListTableAction} size="small" type="primary" onClick={() => {this.showTaskClick(text, record)}}>查看</Button>
 					      	{
-					      		this.state.finishStatus == 0 && 
+					      		record.is_finish == 0 && 
 					      		(userInfo.auth_key == 'admin' && (userInfo.department_pk == record.department_pk) || record.publisher_person_pk == userInfo.pk) 
 					      		? <Button style={ListTableAction} size="small" type="primary" onClick={() => {this.editTaskClick(text, record)}}>编辑</Button> : ""
 					      	}
 					      	{
-					      		this.state.finishStatus != 0 && 
+					      		record.is_finish != 0 && 
 					      		(userInfo.auth_key == 'admin' && (userInfo.department_pk == record.department_pk) || record.publisher_person_pk == userInfo.pk) 
 					      		? <Button style={ListTableAction} size="small" type="primary" onClick={() => {this.resetTaskClick(text, record)}}>重置</Button> : ""
 					      	}
 					      	{
-					      		(this.state.finishStatus == 0 && record.publisher_person_pk == userInfo.pk) || 
+					      		(record.is_finish == 0 && record.publisher_person_pk == userInfo.pk) || 
 					      		(userInfo.auth_key == 'admin' && (userInfo.department_pk == record.department_pk))
 					      		? <Button style={ListTableAction} size="small" type="danger" onClick={() => {this.removeTaskClick(text,record)}}>删除</Button> : ""
 					      	}
@@ -225,6 +227,7 @@ class TaskList extends PureComponent{
 			searchFinishTime:[],// 搜索项目的完成时间
 			searchVal:"",// 搜索任务内容的值
 			selectedTaskRowKeys:"",// 任务行的选择
+			contentHeight:"",// 内容区的高度
 		};
 
 		this.addTaskOk = this.addTaskOk.bind(this);
@@ -241,8 +244,11 @@ class TaskList extends PureComponent{
         	this.fetchTaskList();
         });
 
-		
+        this.setState({
+        	contentHeight:$(window).height() - 150
+        });
 
+	
 	}
 
 	static getDerivedStateFromProps(nextProps,nextState) { // 父组件重传props时就会调用这个方法
@@ -464,6 +470,7 @@ class TaskList extends PureComponent{
 
 		record["publisher_person_pk"] = parseInt(record["publisher_person_pk"]) || "";
 		record["finish_preson_pk"] = parseInt(record["finish_preson_pk"]) || "";
+		record["urgent_status"] = parseInt(record["urgent_status"]) || "";
 
 		this.setState({
 			addTaskData:record,
@@ -858,7 +865,6 @@ class TaskList extends PureComponent{
 
 	render(){
 
-
 		//taskPageMode ： 页面的模式  (myFinishTask:我完成的，all：所有，myReleaseTask：我发布的)
 		const { userInfo,departmentList,userList,taskPageMode,projectList } = this.props;
 		const newUserInfo = userInfo.toJS();
@@ -874,6 +880,7 @@ class TaskList extends PureComponent{
 			searchFinishUser,
 			searchProject,
 			searchVal,
+			contentHeight
 		} = this.state;
 
 		const formItemLayout = {
@@ -1088,16 +1095,19 @@ class TaskList extends PureComponent{
 							) : ""
 						}
 
-						
-						{
-							newUserInfo.auth_key == "admin" ? (
-								<div className="btns-right fr">
-									<Button className="btn-item" type="primary" size="small" onClick={this.exportTaskXlsx}>导出xlsx</Button>
-									<Button className="btn-item" type="primary" size="small" onClick={this.showAddModal}>发布任务</Button>
 
-								</div>
-							) : ""
-						}
+						<div className="btns-right fr">
+							{
+								newUserInfo.auth_key == "admin" ? (
+									<Button className="btn-item" type="primary" size="small" onClick={this.showAddModal}>发布任务</Button>
+								) : ""
+							}
+							<Button className="btn-item" type="primary" size="small" onClick={this.exportTaskXlsx}>导出xlsx</Button>
+						
+						</div>
+
+						
+						
 					</div>
 					{
 						taskPageMode == "all" ? (
@@ -1142,7 +1152,10 @@ class TaskList extends PureComponent{
 					
 				</HeaderNav>
 				<MainContent className={taskPageMode == 'all' ? 'act' : ''}>
-					<Table dataSource={taskListData} columns={this.state.columns} rowSelection={rowSelection} scroll={{ x: 2100,y:1500}}/>
+					<div className="main-content-wrapper" style={{height:contentHeight + 'px'}}>
+						<Table dataSource={taskListData} columns={this.state.columns} rowSelection={rowSelection} scroll={{ x: 2300,y:1500}}/>
+					</div>
+					
 				</MainContent>
 					
 				{/* 添加任务模态框 */}

@@ -77,12 +77,13 @@ class LeftMenu extends PureComponent{
 										<NavLink className="list-item" to="/home/projectPage" activeClassName="selected">
 											<span>项目管理</span>
 										</NavLink>
+										<NavLink className="list-item" to="/home/userManPage" activeClassName="selected">
+											<span>用户管理</span>
+										</NavLink>
 									</Fragment>
 								) : ""
 
-							}
-
-							
+							}	
 
 						</ul>
 

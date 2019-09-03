@@ -32,6 +32,10 @@ class Home extends PureComponent{
 		this.props.getDepartmentList();
 
 		this.props.getProjectList();
+
+		this.props.getAuthorityList();
+		
+		this.props.getRanksList();
 	}
 
 	render(){
@@ -85,7 +89,17 @@ const mapDispatch = (dispatch) => ({
 	
 		const action = actionCreators.getProjectList();
 		dispatch(action);
-	}
+	},
+	getAuthorityList(){ /// 获取权限列表
+		
+		const action = actionCreators.getAuthorityList();
+		dispatch(action);
+	},
+	getRanksList(){ // 获取职位列表
+
+		const action = actionCreators.getRanksList();
+		dispatch(action);
+	}	
 });
 
 

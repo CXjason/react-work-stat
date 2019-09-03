@@ -92,10 +92,11 @@ class Login extends PureComponent{
 				if(res.data.data["pk"] > 0){
 					
 					console.log("登录成功");
-					this.props.history.push("/home");
-
+					
 					let userInfo = res.data.data;
 					this.props.changeUserInfo(userInfo);
+
+					this.props.history.push("/home");
 
 				}else{
 					alert("登录失败")

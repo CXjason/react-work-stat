@@ -16,8 +16,8 @@ export const HeaderNav = styled.div`
 	left:0;
 	top:34px;
 	width:100%;
-	height:40px;
 	z-index:10;
+	background-color:#fff;
 
 	.header-item{
 		padding-bottom:8px;
@@ -61,12 +61,19 @@ export const HeaderNav = styled.div`
 
 export const MainContent = styled.div`
 	position:relative;
-	height:100%;
+	height:90%;
 	padding-top:64px;
 	box-sizing:border-box;
+	
 
 	&.act{
 		padding-top:88px;
+	}
+
+	.main-content-wrapper{
+		position:relative;
+		height:100%;
+		overflow-y:auto;
 	}
 `;
 

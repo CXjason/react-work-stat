@@ -16,7 +16,6 @@ export const HomeWrapper = styled.div`
 
 		position:relative;
 		height:100%;
-		padding-top:60px;
 		box-sizing:border-box;
 		overflow:hidden;
 		margin-left:160px;
@@ -69,7 +68,16 @@ export const LeftMenuWrapper = styled.div`
 export const RightContentWrapper = styled.div`
 	height:100%;
 	position:relative;
+	padding-top:60px;
+	box-sizing:border-box;
 	overflow:hidden;
+
+	
+	.router-wrapper-route{
+		height:100%;
+		position:relative;
+	}
+
 `;
 
 

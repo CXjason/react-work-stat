@@ -22,9 +22,6 @@ class TaskList extends PureComponent{
 			
 		};
 
-
-
-
 	}
 
 	componentDidMount(){
@@ -34,8 +31,6 @@ class TaskList extends PureComponent{
 
 	
 	render(){
-
-
 
 		return (
 			<TaskListWrapper>

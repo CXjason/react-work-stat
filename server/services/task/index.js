@@ -138,4 +138,23 @@ exports.removeTaskItem = async ctx => {
 	ctx.body = res;
 }
 
+exports.authorityList = async ctx => {
+
+	let res;
+
+	try{
+
+		await taskController.authorityList().then(result => {
+
+			res = success(result);
+		});
+
+
+	}catch(err){
+		res = failed(err);
+	}
+
+	ctx.body = res;
+}
+
 

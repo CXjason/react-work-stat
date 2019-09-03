@@ -229,6 +229,18 @@ const updateTaskItem = val => { // 修改一条任务
 
 };
 
+let updateProjectName = val => { // 修改项目名称
+
+
+	let project_name = val["project_name"];
+	let project_pk = val["project_pk"];
+
+	let sql = "UPDATE task SET project_name=? WHERE project_pk=?";
+	let sqpParams = [project_name,project_pk];
+
+	return query(sql,sqpParams);
+};
+
 
 let removeTaskItem = val => { // 删除一条任务
 
@@ -240,6 +252,14 @@ let removeTaskItem = val => { // 删除一条任务
 
 };
 
+
+let authorityList = val => {
+
+	let sql = "SELECT * FROM authority";
+
+	return query(sql)
+};
+
 module.exports = {
   list,
   departmentList,
@@ -247,5 +267,7 @@ module.exports = {
   taskList,
   addTaskItem,
   updateTaskItem,
+  updateProjectName,
   removeTaskItem,
+  authorityList,
 }

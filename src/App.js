@@ -13,8 +13,6 @@ import Login from './pages/login/index.js';
 
 import "./App.css";
 
-
-
 class App extends Component{
 
 	constructor(props){
@@ -26,12 +24,24 @@ class App extends Component{
 	}
 
 	render(){
+
+		
+
 		return (
 			<Provider store={store}>
 		      <HashRouter>
 
 		      	<CacheSwitch>
-				  	<CacheRoute className="home-cache-route-page" path="/home" component={Home}></CacheRoute>
+				  	<CacheRoute className="home-cache-route-page" path="/home" render={
+				  		(props) => {
+				  			let state = store.getState().toJS();
+				  			if(state["login"]["userInfo"]["username"]){
+				  				return (<Home {...props}/>)
+				  			}else{
+				  				return (<Redirect to="/login"/>)	
+				  			}
+				  		}
+				  	}></CacheRoute>
 			      	<Route path="/login" exact component={Login}></Route>
 			      	<Redirect from='/' to='/login' />
 				</CacheSwitch>_

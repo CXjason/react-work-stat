@@ -6,6 +6,7 @@
 const pojo = require('../../helper/pojo');
 const { success, failed } = pojo;
 const projectController = require("../../controller/project/index.js");
+const taskController = require("../../controller/task/index.js");
 const { 
 	formatDataTime,
 	otherLast
@@ -19,6 +20,7 @@ exports.projectList = async ctx => { // 获取项目列表
 		await projectController.projectList().then(result => {
 
 			otherLast(result,"name","其他");
+			formatDataTime(result,"create_time");
 
 			res = success(result);
 		});
@@ -60,12 +62,23 @@ exports.updateProject = async ctx => { // 修改项目
 
 		let val = ctx.request.body;
 
-		await projectController.updateProject(val).then(result =>{
+		let result = await projectController.updateProject(val).then(result =>{
 
-			console.log(result)
+			let updateTaskParams = {
+				project_name:val.name,
+				project_pk:val.pk,
+			}
+
+			taskController.updateProjectName(updateTaskParams).then(result => {
+
+
+			});
 
 			res = success(result);
+
+			
 		})
+
 
 	}catch(err){
 

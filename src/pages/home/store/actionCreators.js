@@ -37,8 +37,17 @@ const getProjectListAction = (result) => ({
 	projectList:result
 });
 
+const getAuthorityListAction = (result) => ({
+	type:constants.GET_AUTHORITY_LIST_DATA,
+	authorityList:result
+});
+const getRanksListAction = (result) => ({
+	type:constants.GET_RANKS_LIST_DATA,
+	ranksList:result
+});
 
-export const changeTaskListData = () => {
+
+export const changeTaskListData = () => { // 获取任务列表
 
 	return (dispatch) => {
 
@@ -63,7 +72,7 @@ export const changeTaskListData = () => {
 }
 
 
-export const changeUserList = () => {
+export const changeUserList = () => { // 获取用户列表
 
 	return (dispatch) => {
 
@@ -76,6 +85,8 @@ export const changeUserList = () => {
 
 				let result = res.data.data;
 
+				addDataKey(result,"key","pk");
+
 				dispatch(changeUserListAction(result));
 			}
 
@@ -87,7 +98,7 @@ export const changeUserList = () => {
 }
 
 
-export const getDepartmentList = () => {
+export const getDepartmentList = () => { // 获取部门列表
 
 	return (dispatch) => {
 
@@ -109,7 +120,7 @@ export const getDepartmentList = () => {
 }
 
 
-export const getProjectList = () => {
+export const getProjectList = () => { // 获取项目列表
 
 	return (dispatch) => {
 
@@ -125,6 +136,45 @@ export const getProjectList = () => {
 				dispatch(getProjectListAction(result));
 			}
 		})
+	}
+}
+
+export const getAuthorityList = () => { /// 获取权限列表
+
+	return (dispatch) => {
+
+		$api.getAuthorityList().then(res => {
+
+			console.log("获取权限列表");
+			console.log(res);
+
+			if(res.data.code == 0){
+
+				let result = res.data.data;
+				addDataKey(result,"key","pk");
+				dispatch(getAuthorityListAction(result));
+			}
+		})
+	}
+}
+
+
+export const getRanksList = () => { // 获取职位列表
+
+	return (dispatch) => {
+
+		$api.getRanksList().then(res => {
+			console.log("获取职位列表");
+			console.log(res);
+
+			if(res.data.code == 0){
+
+				let result = res.data.data;
+				addDataKey(result,"key","pk");
+				dispatch(getRanksListAction(result));
+			}
+		})
+
 	}
 }
 

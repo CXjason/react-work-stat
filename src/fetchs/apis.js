@@ -171,5 +171,34 @@ export default {
     return fetch(urls.getTaskExportXlsxUrl,params);
   },
 
+  /*
+    获取权限列表
+
+  */
+  getAuthorityList(params){
+    return fetch(urls.getAuthorityListUrl,params);
+  },
+
+  /*
+    获取职位列表
+  */
+  getRanksList(params){
+    return fetch(urls.getRanksListUrl,params)
+  },
+
+  /*
+    添加用户
+  */
+  getAddUser(params){
+    return fetch(urls.getAddUserUrl,params);
+  },
+
+  /*
+    添加用户
+  */
+  getRemoveUser(params){
+    return fetch(urls.getRemoveUserUrl,params);
+  },
+
 
 };
