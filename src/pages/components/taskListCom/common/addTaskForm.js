@@ -27,7 +27,7 @@ import {
 
  	componentDidMount(){
 
-
+ 		this.props.onRef(this)
  		this.props.addTaskFormFn(this)
  	}
 
@@ -47,6 +47,10 @@ import {
 	      }
 	    });
  	};
+ 	resetFields = () => { // 重置表单
+ 		this.props.form.resetFields();
+ 	}
+ 	   
 
 
 
@@ -71,6 +75,9 @@ import {
 	        sm: { span: 20 },
 	      },
 	    };
+
+	    console.log("----------")
+	   console.log(data);
 
  		return(
  			<Form {...formItemLayout} onSubmit={this.handleSubmit}>
@@ -182,7 +189,7 @@ import {
 		        <FormItem label="预计完成时间">
 					{
 						getFieldDecorator("estimate_time",{
-							initialValue:data.estimate_time ? moment(data.estimate_time) : moment(),
+							initialValue:data.estimate_time ? moment(data.estimate_time) : moment(moment().format("YYYY-MM-DD") + " 23:59:59"),
 							rules:[
 				          		{ required: true, message: '必填' },
 				          	]

@@ -31,6 +31,7 @@ import dataPickerLocale from 'antd/es/date-picker/locale/zh_CN';
 import AddTaskForm from './common/addTaskForm.js';
 
 import { 
+	jsonClone,
 	findArrKeyVal,
 	addDataKey
 } from "../../../utils/tool.js";
@@ -467,16 +468,25 @@ class TaskList extends PureComponent{
 		// console.log(text)
 		// console.log(record)
 
+		let data = jsonClone(record);
 
-		record["publisher_person_pk"] = parseInt(record["publisher_person_pk"]) || "";
-		record["finish_preson_pk"] = parseInt(record["finish_preson_pk"]) || "";
-		record["urgent_status"] = parseInt(record["urgent_status"]) || "";
+
+		data["publisher_person_pk"] = parseInt(data["publisher_person_pk"]) || "";
+		data["finish_preson_pk"] = parseInt(data["finish_preson_pk"]) || "";
+		data["urgent_status"] = parseInt(data["urgent_status"]) || "";
+
+		// 刷新表单数据
+		if(this.addTaskFormRef){
+			this.addTaskFormRef.resetFields();
+		};
 
 		this.setState({
-			addTaskData:record,
+			addTaskData:data,
 			addTaskModal:true,
 			taskOperaModel:"update"
 		});
+
+		console.log(this.state.addTaskData);
 
 
 	}
@@ -535,6 +545,11 @@ class TaskList extends PureComponent{
 		    },
 		  })
 		
+	}
+
+	onAddTaskForm = (ref) => {
+
+		this.addTaskFormRef = ref;
 	}
 
 	finishTaskClick = (text,record,taskStatus) => { // 完成任务 taskStatus：任务状态
@@ -694,20 +709,22 @@ class TaskList extends PureComponent{
 		let overtimeTaskData = [];
 
 		// 用户pk
-		let userPk = this.props.userInfo.pk;
+		let userInfo = this.props.userInfo.toJS();
+		let userPk = userInfo.pk;
 		// 3 小时
 		let timeRange = 3 * 60 * 60 * 1000;
 		for(let item of taskList){
 
-			let estimageTime = moment(item["estimageTime"]).format("x");
+			let estimageTime = moment(item["estimate_time"]).format("x");
 			let nowTime = moment().format("x");
 
-			if(userPk == item.finish_preson_pk && (nowTime - estimageTime) <= timeRange){
+			if((userPk == item.finish_preson_pk && (estimageTime - nowTime) <= timeRange) && (item.is_finish == 0 || item.is_finish == 1)){
 
 				overtimeTaskData.push(item);
 			}
 
 		};
+
 
 		this.setState({
 			overtimeTaskData
@@ -835,6 +852,11 @@ class TaskList extends PureComponent{
 
 	exportTaskXlsx = () => { // 导出任务的xlsx表
 
+
+		let userInfo = this.props.userInfo;
+		userInfo = userInfo.toJS();
+
+
 		if(this.state.selectedTaskRowKeys.length == 0){
 
 			message.warning("请先选中任务！");
@@ -842,8 +864,12 @@ class TaskList extends PureComponent{
 		}
 
 		let params = {
-			data:this.state.selectedTaskRowKeys
+			exportUser:userInfo.username, // 导出人
+			data:JSON.stringify(this.state.selectedTaskRowKeys)
+			//data:this.state.selectedTaskRowKeys
 		};
+
+		console.log(this.state.selectedTaskRowKeys)
 
 		api.getTaskExportXlsx(params).then(res => {
 
@@ -880,8 +906,11 @@ class TaskList extends PureComponent{
 			searchFinishUser,
 			searchProject,
 			searchVal,
-			contentHeight
+			contentHeight,
+			addTaskData
 		} = this.state;
+
+		console.log(addTaskData);
 
 		const formItemLayout = {
 	      labelCol: {
@@ -914,7 +943,6 @@ class TaskList extends PureComponent{
 
 		return (
 			<TaskListWrapper>
-
 				{
 					// 任务即将超时提醒
 					overtimeTaskData.length > 0 ? (
@@ -922,6 +950,10 @@ class TaskList extends PureComponent{
 							<Carousel
 								autoplay
 								dots={false}
+								speed= {20000}
+							    autoplaySpeed={10000}
+							    cssEase="linear"
+							    infinite={true}
 							>
 							    {
 
@@ -936,8 +968,8 @@ class TaskList extends PureComponent{
 
 							    		return (
 
-							    			<div>
-							    				item.publisher_person + " 发布的 " + task_content + " 将于 " + estimate_time + " 超时"
+							    			<div className="notic-item" key={item.key}>
+							    				{item.publisher_person}  发布的 {task_content} 将于 {item.estimate_time} 超时
 							    			</div>
 							    		)
 
@@ -1168,9 +1200,10 @@ class TaskList extends PureComponent{
 		          onCancel={this.addTaskCancel}
 		        >
 		         	<AddTaskForm 
+		         		onRef={this.onAddTaskForm}
 		         		addTaskFormFn={this.addTaskFormFn} 
 		         		addTaskFormSubmitUpdate={this.addTaskFormSubmitUpdate}
-		         		data={this.state.addTaskData}
+		         		data={addTaskData}
 		         	/>
 		        </Modal>
 
@@ -1182,6 +1215,9 @@ class TaskList extends PureComponent{
 		          onCancel={this.finishConfirmModelCacel}
 		        >
 		          <p>{ this.state.finishConfirmData.content }</p>
+		          <p style={{display:this.state.finishConfirmData.is_finish == 3 && this.state.finishConfirmData.finish_leav_msg ? 'block' : 'none'}}>
+		          	完成留言： {this.state.finishConfirmData.finish_leav_msg}
+		          </p>
 		          <TextArea rows={4} value={this.state.finishConfirmData.finish_leav_msg} onChange={this.updateFinishLeavMsgVal}/>
 		        </Modal>
 

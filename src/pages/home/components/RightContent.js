@@ -20,6 +20,7 @@ import MyTaskList from '../../myTaskList/index.js';
 import MyReleaseTaskList from '../../MyReleaseTaskList';
 import ProjectManWrapper from '../../projectMan/index.js';
 import UserManPage from '../../userManPage/index.js';
+import StatisticePage from '../../statisticePage/index.js';
 
 
 class RightContent extends PureComponent{
@@ -42,6 +43,7 @@ class RightContent extends PureComponent{
 							<CacheRoute path="/home/taskList" component={TaskList}></CacheRoute>
 							<CacheRoute path="/home/projectPage" component={ProjectManWrapper}></CacheRoute>
 							<CacheRoute path="/home/userManPage" component={UserManPage} className="router-wrapper-route"></CacheRoute>
+							<CacheRoute path="/home/statisticsPage" component={StatisticePage} className="router-wrapper-route"></CacheRoute>
 							<Redirect from="/home" to="/home/taskList" />
 						</CacheSwitch> 
 						

@@ -50,10 +50,13 @@ class Login extends PureComponent{
 
 		if(jasonWorkMan){
 
-		    this.setState((prevState, props) => ({
-	        	username:jasonWorkMan.username,
-				password:jasonWorkMan.password
-		    }));
+			console.log(jasonWorkMan)
+
+	    this.setState((prevState, props) => ({
+      	username:jasonWorkMan.username || "",
+				password:jasonWorkMan.password || "",
+				rememberPwd:jasonWorkMan.rememberPwd,
+	    }));
 
 		};
 	}
@@ -62,19 +65,23 @@ class Login extends PureComponent{
 	loginFn(){  //登录
 
 		//将账号密码存到locaStorage
+		let jasonWorkMan = {};
 		if(this.state.rememberPwd){ //记住密码
 
-			let jasonWorkMan = {
+			jasonWorkMan = {
 				username:this.state.username,
-				password:this.state.password
+				password:this.state.password,
+				rememberPwd:this.state.rememberPwd,
 			};
 
-			$store.set("jasonWorkMan",jasonWorkMan);
-
+		
 		}else{ //清空记住的密码
 
-			$store.remove("jasonWorkMan");
+			jasonWorkMan = {
+				rememberPwd:this.state.rememberPwd,
+			};
 		};
+		$store.set("jasonWorkMan",jasonWorkMan);
 
 
 		let params = {
@@ -138,12 +145,11 @@ class Login extends PureComponent{
 		});
 
 
-
-
 	}
 
 	render(){
 
+		console.log(this.state)
 
 		return (
 				<LoginWrapper imgUrl="../../assets/images/bg.png">
@@ -151,12 +157,12 @@ class Login extends PureComponent{
 					  	<h1>登&nbsp;&nbsp;&nbsp;&nbsp;录</h1>
 					  	 <div className="line lineName">
 					 		<span className="iconfont icon-user">&#xe726;</span>
-					 	    <input type="" placeholder="请输入用户名" defaultValue={this.state.username} onChange={this.changeUsername}/>
+					 	    <input type="" placeholder="请输入用户名" value={this.state.username} onChange={this.changeUsername}/>
 					  	 </div>
 					  	 <div className="nameT tips"></div>
 					  	 <div className="line linePsd">
 					  	 	<span className="iconfont iconpassword" >&#xe82b;</span>
-					  	 	<input type="password" name="password" id="password"placeholder="请输入密码" defaultValue={this.state.password} onChange={this.changePassword}/>
+					  	 	<input type="password" name="password" id="password"placeholder="请输入密码" value={this.state.password} onChange={this.changePassword}/>
 					  	 </div>
 					  	 <div className="psdT tips"></div>
 					  	  <div className="line_top">

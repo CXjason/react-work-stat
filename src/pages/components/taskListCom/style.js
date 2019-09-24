@@ -5,7 +5,7 @@ import styled from 'styled-components';
 export const TaskListWrapper = styled.div`
 	height:100%;
 	position:relative;
-	min-width:1400px;
+	min-width:1300px;
 
 `;
 
@@ -95,6 +95,10 @@ export const NoticeWrapper = styled.div`
 	top:10px;
 	width:100%;
 	z-index:10;
+
+	.notic-item{
+		padding:0 10px;
+	}
 
 `;
 

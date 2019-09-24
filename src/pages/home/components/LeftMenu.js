@@ -83,7 +83,10 @@ class LeftMenu extends PureComponent{
 									</Fragment>
 								) : ""
 
-							}	
+							}
+							<NavLink className="list-item" to="/home/statisticsPage" activeClassName="selected">
+								<span>任务统计</span>
+							</NavLink>	
 
 						</ul>
 

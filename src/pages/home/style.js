@@ -32,6 +32,7 @@ export const LayerWrapper = styled.div`
 	left:0;
 	top:0;
 	background-color:#333;
+	z-index:10;
 
 	.wr-box{
 		height:100%;
@@ -44,9 +45,19 @@ export const LayerWrapper = styled.div`
 			color:#fff;
 			font-size:13px;
 
+			.rig-item{
+				margin-right:12px;
+			}
+
 			.username{
 				font-size:14px;
 			}
+
+			.logout{
+				cursor:pointer;
+			}
+
+			
 		}
 	}
 

@@ -1,8 +1,6 @@
 
 
 
-
-
 import axios from 'axios';
 import qs from 'qs';
 import * as urls from './urls.js';

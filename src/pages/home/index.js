@@ -20,6 +20,8 @@ import {
 class Home extends PureComponent{
 
 	constructor(props){
+
+
 		super(props);
 	}
 
@@ -49,7 +51,7 @@ class Home extends PureComponent{
 
 					<div className="bot-info-wrapper">
 
-						<TopInofColumnCom></TopInofColumnCom>
+						<TopInofColumnCom {...this.props}></TopInofColumnCom>
 
 						<RightContentCom></RightContentCom>
 

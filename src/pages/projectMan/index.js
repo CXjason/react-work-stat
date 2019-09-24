@@ -123,6 +123,8 @@ class ProjectMan extends Component{
 
 	updateProjectClick = (text, record) => { // 修改项目
 
+		this.props.form.resetFields();
+
 
 		let addProjectModalData = {
 			mode:"update",
@@ -134,8 +136,7 @@ class ProjectMan extends Component{
 			addProjectModalData
 		});
 
-
-
+		
 		
 	}
 

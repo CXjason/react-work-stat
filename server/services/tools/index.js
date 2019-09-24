@@ -6,6 +6,7 @@ const path = require("path");
 const pojo = require('../../helper/pojo');
 const { success, failed } = pojo;
 const nodeExcel = require('excel-export');
+const moment = require("moment");
 
 
 const { 
@@ -19,10 +20,16 @@ exports.exportTaskXlsx = async ctx => { // 导出xlsx表
 
 
 	let taskData = ctx.request.body.data;
+	let exportUser = ctx.request.body.exportUser;// 导出人
+	//console.log(taskData);
+	taskData = JSON.parse(taskData);
+
+	//console.log(JSON.parse(JSON.stringify(taskData)))
+
 
 	let xlsxData = await exportdata(taskData);
 
-	let filename = "task_"+Date.parse(new Date)+".xlsx";
+	let filename = "task_" + exportUser + "_" + moment().format("YYYY年MM月DD日HH时") +".xlsx";
 	let url = path.resolve(__dirname,"../../upload/" + filename);
 	fs.writeFileSync(url, xlsxData, 'binary');
 
@@ -38,6 +45,8 @@ async function exportdata(v) {
     let conf ={};
     conf.name = "task";//表格名
     let alldata = new Array();
+
+
     for(let i = 0;i<v.length;i++){
         let arr = new Array();
 
@@ -58,8 +67,13 @@ async function exportdata(v) {
         arr.push(create_time);
         arr.push(finish_time);
         arr.push(finish_preson);
+
         alldata.push(arr);
-    }
+    };
+
+    //console.log(JSON.parse(JSON.stringify(alldata)));
+
+
     //决定列名和类型
     conf.cols = [
 	    {
@@ -104,6 +118,7 @@ async function exportdata(v) {
 	    }
     ];
     conf.rows = alldata;//填充数据
+
     let result = nodeExcel.execute(conf);
     //最后3行express框架是这样写
     // res.setHeader('Content-Type', 'application/vnd.openxmlformats');

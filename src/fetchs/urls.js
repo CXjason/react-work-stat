@@ -1,6 +1,6 @@
 
 
-let ipconfig = "http://192.168.2.123:8891/";
+let ipconfig = "http://127.0.0.1:8891/";
 let getLoginUrl = "/jasonWorkStat/user/login";//登录
 let getTaskListUrl = "/jasonWorkStat/task/taskList";//获取任务列表
 let getUserLIstUrl = "/jasonWorkStat/user/userList";// 获取用户列表

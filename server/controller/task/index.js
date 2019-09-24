@@ -38,6 +38,8 @@ const taskList = val => {
 	for(let item in val){
 
 		if(
+			item != "create_start" && 
+			item != "create_end" && 
 			item != "estimate_start" && 
 			item != "estimate_end" && 
 			item != "finishTime_start" && 
@@ -62,6 +64,12 @@ const taskList = val => {
 	let searchVal = val["searchVal"] || "";
 	if(searchVal){
 		where += " AND (task_content LIKE '%"+searchVal+"%')";
+	};
+
+	// 新建时间
+	if(val["create_start"] && val["create_end"]){
+
+		where += " and create_time between '" + val["create_start"] + "' and '" + val["create_end"] + "'";
 	};
 	
 

@@ -19,6 +19,8 @@
     "css-loader": "2.1.1",
     "dotenv": "6.2.0",
     "dotenv-expand": "4.2.0",
+    "echarts": "^4.2.1",
+    "echarts-for-react": "^2.0.15-beta.0",
     "eslint": "^5.16.0",
     "eslint-config-react-app": "^4.0.1",
     "eslint-loader": "2.1.2",
@@ -143,5 +145,6 @@
     "presets": [
       "react-app"
     ]
-  }
+  },
+  "homepage":"."
 }
