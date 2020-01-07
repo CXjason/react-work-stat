@@ -25,12 +25,9 @@ class App extends Component{
 
 	render(){
 
-		
-
 		return (
 			<Provider store={store}>
 		      <HashRouter>
-
 		      	<CacheSwitch>
 				  	<CacheRoute className="home-cache-route-page" path="/home" render={
 				  		(props) => {

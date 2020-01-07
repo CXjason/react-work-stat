@@ -9,31 +9,9 @@ const TYPES = require('../../enum');
 const moment = require("moment");
 
 
-// 查询任务
-const list = val => {
-  const sql = 'select * from task';
-  return query(sql)
-};
-
-// 获取部门列表
-const departmentList = val => {
-	const sql = "SELECT * FROM department";
-	return query(sql);
-};
-
-// 获取职位列表
-const ranksList = val => {
-
-	const sql = "SELECT * FROM ranks";
-	return query(sql);
-};
-
-// 获取任务列表
-const taskList = val => {
-
+// 获取任务列表的where
+let getTaskListWhere = val => {
 	let where = "";
-
-
 
 	for(let item in val){
 
@@ -44,14 +22,14 @@ const taskList = val => {
 			item != "estimate_end" && 
 			item != "finishTime_start" && 
 			item != "finishTime_end" &&
-			item != "searchVal"
+			item != "searchVal" &&
+			item != "page" &&
+			item != "pageSize"
 		){
 
 			where += item + "=" + val[item] + " and ";
 		}
 	};
-
-
 
 	// 条件
 	if(where != ""){
@@ -85,9 +63,62 @@ const taskList = val => {
 		where += " and finish_time between '" + val["finishTime_start"] + "' and '" + val["finishTime_end"] + "'";
 	};
 
-	const sql = "SELECT * FROM task " + where + " ORDER BY create_time DESC";
+	return where;
+};
+
+
+// 查询任务
+const list = val => {
+  const sql = 'select * from task';
+  return query(sql)
+
+};
+// 获取部门列表
+const departmentList = val => {
+	const sql = "SELECT * FROM department";
+	return query(sql);
+};
+
+// 获取职位列表
+const ranksList = val => {
+
+	const sql = "SELECT * FROM ranks";
+	return query(sql);
+};
+
+// 获取任务列表
+const taskList = val => {
+
+	let where = getTaskListWhere(val);
+
+	// 计算分页
+	// 每页条数默认为10条
+	let limit = ""
+	if(val["page"] && val["pageSize"]){
+
+		let {page,pageSize} = val;
+		//开始条数
+		let startNum = (page - 1) * pageSize;
+		let endNum = page * pageSize;
+
+		limit = " limit " + startNum + "," + pageSize;
+
+	};
+
+	const sql = "SELECT * FROM task " + where + " ORDER BY create_time DESC" + limit;
+
 
 	return query(sql);
+};
+
+// 获取任务列表总条数
+const taskListTotal = val => {
+
+	let where = getTaskListWhere(val);
+
+	let sql = "SELECT COUNT(*) as total FROM task " + where;
+
+	return query(sql)
 };
 
 const addTaskItem = val => {
@@ -273,6 +304,7 @@ module.exports = {
   departmentList,
   ranksList,
   taskList,
+  taskListTotal,
   addTaskItem,
   updateTaskItem,
   updateProjectName,

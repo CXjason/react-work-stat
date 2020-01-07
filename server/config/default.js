@@ -1,6 +1,7 @@
 const config = {
   // 启动端口
   port: 8891,
+  httpsPort:8892,
 
   // 数据库配置
   database: {

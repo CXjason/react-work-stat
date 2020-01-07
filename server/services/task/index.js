@@ -53,17 +53,32 @@ exports.taskList = async ctx => { // 获取 任务列表
 
 		let val = ctx.request.body;
 
+		// 获取列表数据
+		let taskListData = await taskController.taskList(val);
 
-		await taskController.taskList(val).then(result => {
-
-			formatDataTime(result,"create_time");
-			formatDataTime(result,"estimate_time");
-			formatDataTime(result,"finish_time");
-			formatDataTime(result,"examine_time");
+		formatDataTime(taskListData,"create_time");
+		formatDataTime(taskListData,"estimate_time");
+		formatDataTime(taskListData,"finish_time");
+		formatDataTime(taskListData,"examine_time");
 
 
-			res = success(result);
-		})
+		res = success(taskListData);
+
+		let total = await taskController.taskListTotal(val)
+
+		res["total"] = total[0]["total"];
+
+		// await taskController.taskList(val).then(result => {
+
+		// 	formatDataTime(result,"create_time");
+		// 	formatDataTime(result,"estimate_time");
+		// 	formatDataTime(result,"finish_time");
+		// 	formatDataTime(result,"examine_time");
+
+		// 	res = success(result);
+		// });
+
+
 	}catch(err){
 
 		res = failed(err);

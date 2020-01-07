@@ -1,13 +1,13 @@
 
 
-
+const { apiPrefix } = require("./config.js");
 
 
 module.exports = (config => {
 	return config.reduce((copy, name) => {
 	    const obj = require(`./${name}`)
 	    const newArr = Object.keys(obj).reduce((total, each) => {
-		    let item = { path: `/jasonWorkStat/${name}/${each}`, method: obj[each].method, action: each, service: name }
+		    let item = { path: `${apiPrefix}/${name}/${each}`, method: obj[each].method, action: each, service: name }
 		    total.push(item)
 		    return total
 	    }, [])
@@ -18,7 +18,11 @@ module.exports = (config => {
   'user',
   'task',
   'project',
-  "tools"
+  "tools",
+  "prvUser",
+  "prvTask",
+  "punchCard",
+  "affairRecord",
 ]);
 
 

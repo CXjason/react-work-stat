@@ -1,5 +1,6 @@
 var Koa=require('koa');
 var path=require('path')
+const fs = require('fs');
 var bodyParser = require('koa-bodyparser');
 var session = require('koa-session-minimal');
 var MysqlStore = require('koa-mysql-session');
@@ -7,6 +8,7 @@ var config = require('./config/default.js');
 var router=require('koa-router')
 var views = require('koa-views')
 var koaStatic = require('koa-static')
+var https = require('https');
 var app=new Koa()
 const routers = require('./routers/index');
 
@@ -63,6 +65,14 @@ app.use(routers.routes()).use(routers.allowedMethods())
 // app.use(require('./routers/signout.js').routes())
 
 // 监听在1200
-app.listen(config.port)
+app.listen(config.port);
+
+
+// https
+var privateKey = fs.readFileSync('server.key').toString();
+var certificate = fs.readFileSync('server.crt').toString();
+
+var creadentials = {key:privateKey,cert:certificate};
+https.createServer(creadentials, app.callback()).listen(config.httpsPort);
 
 console.log(`listening on port ${config.port}`)

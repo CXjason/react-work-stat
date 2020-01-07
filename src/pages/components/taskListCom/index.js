@@ -60,6 +60,8 @@ class TaskList extends PureComponent{
 		super(props);
 
 		let userInfo = this.props.userInfo.toJS();
+
+
 		this.state = {
 			columns:[
 			  {
@@ -229,6 +231,11 @@ class TaskList extends PureComponent{
 			searchVal:"",// 搜索任务内容的值
 			selectedTaskRowKeys:"",// 任务行的选择
 			contentHeight:"",// 内容区的高度
+			paginationData:{ // 分页
+				current:1,
+				pageSize:10,
+				total:0
+			},
 		};
 
 		this.addTaskOk = this.addTaskOk.bind(this);
@@ -241,13 +248,13 @@ class TaskList extends PureComponent{
 	componentDidMount(){
 
         
-        this.setState({getTaskListParams: this.props.getTaskListParams},()=>{
-        	this.fetchTaskList();
-        });
+    this.setState({getTaskListParams: this.props.getTaskListParams},()=>{
+    	this.fetchTaskList();
+    });
 
-        this.setState({
-        	contentHeight:$(window).height() - 150
-        });
+    this.setState({
+    	contentHeight:$(window).height() - 150
+    });
 
 	
 	}
@@ -320,6 +327,7 @@ class TaskList extends PureComponent{
 			searchEstimateTime,
 			searchFinishTime,
 			searchVal,
+			paginationData,
 		} = this.state;
 
 
@@ -376,6 +384,10 @@ class TaskList extends PureComponent{
 
 		};
 
+		// 分页 数据
+		params["page"] = paginationData.current;
+		params["pageSize"] = paginationData.pageSize;
+
 
 		api.getTaskList(params).then(res => {
 			console.log("获取任务列表");
@@ -388,8 +400,11 @@ class TaskList extends PureComponent{
 
 				this.collOvertimeTaskData(newData);
 
+				let paginationData = Object.assign({},this.state.paginationData,{total:res.data.total});
+
 				this.setState({
-					taskListData:newData
+					taskListData:newData,
+					paginationData
 				});
 
 			};
@@ -554,6 +569,14 @@ class TaskList extends PureComponent{
 
 	finishTaskClick = (text,record,taskStatus) => { // 完成任务 taskStatus：任务状态
 
+		
+		let userInfo = this.props.userInfo.toJS();
+
+		// 判断如果为管理员则直接通过审核
+		if(userInfo.auth_pk == 2){ //管理员
+			taskStatus = 3;
+		};
+
 		let content = "是否确认完成 " + record["publisher_person"] + " 发布的 " + record["project_name"] + " 项目的任务";
 
 		let finishConfirmData = {
@@ -647,10 +670,24 @@ class TaskList extends PureComponent{
 
 	addTaskOk = () => { // 添加任务 模态框确定
 
-		
 		this.addTaskFormRef.submitFn();
 
 	}
+
+	// table 数据分页
+	tablePaginationChange = (page,pageSize) => {
+
+		console.log(page,pageSize);
+
+		//let paginationData = Object.assign({},this.state.paginationData,{current:page});
+
+		this.setState({
+			paginationData:page
+		},() => {
+			this.fetchTaskList();
+		})
+
+	};
 
 	addTaskCancel(){ // 添加任务 模态框取消
 		this.setState({
@@ -907,7 +944,8 @@ class TaskList extends PureComponent{
 			searchProject,
 			searchVal,
 			contentHeight,
-			addTaskData
+			addTaskData,
+			paginationData
 		} = this.state;
 
 		console.log(addTaskData);
@@ -1185,7 +1223,14 @@ class TaskList extends PureComponent{
 				</HeaderNav>
 				<MainContent className={taskPageMode == 'all' ? 'act' : ''}>
 					<div className="main-content-wrapper" style={{height:contentHeight + 'px'}}>
-						<Table dataSource={taskListData} columns={this.state.columns} rowSelection={rowSelection} scroll={{ x: 2300,y:1500}}/>
+						<Table 
+							dataSource={taskListData} 
+							columns={this.state.columns} 
+							rowSelection={rowSelection} 
+							scroll={{ x: 2300,y:1500}}
+							pagination={paginationData}
+							onChange={this.tablePaginationChange}
+						/>
 					</div>
 					
 				</MainContent>
