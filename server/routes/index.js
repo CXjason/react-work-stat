@@ -23,6 +23,7 @@ module.exports = (config => {
   "prvTask",
   "punchCard",
   "affairRecord",
+  "updateProjectLogs",
 ]);
 
 
