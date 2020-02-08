@@ -6,9 +6,8 @@ const TYPES = require('../../enum');
 
 const moment = require("moment");
 
-
-// 获取列表
-const list = val => {
+// 获取列表的where
+let getTaskListWhere = val => {
 
 	let where = "";
 
@@ -16,7 +15,9 @@ const list = val => {
 
 		if(
 			item != "searchVal" &&
-			val[item] != ""
+			val[item] != "" &&
+			item != "page" &&
+			item != "pageSize"
 		){
 			where += item + "=" + val[item] + " and ";
 		}
@@ -41,7 +42,33 @@ const list = val => {
 		
 	};
 
-	const sql = "SELECT * FROM affair_record " + where + " ORDER BY create_time DESC";
+	return where;
+};
+
+
+// 获取列表
+const list = val => {
+
+	
+
+	let where = getTaskListWhere(val);
+
+	// 计算分页
+	// 每页条数默认为10条
+	let limit = ""
+	if(val["page"] && val["pageSize"]){
+
+		let {page,pageSize} = val;
+		//开始条数
+		let startNum = (page - 1) * pageSize;
+		let endNum = page * pageSize;
+
+		limit = " limit " + startNum + "," + pageSize;
+
+	};
+
+	const sql = "SELECT * FROM affair_record " + where + " ORDER BY create_time DESC" + limit;
+
 	return query(sql);
 };
 
@@ -50,6 +77,16 @@ const recordTypeList = val => {
 
 	const sql = "SELECT * FROM affair_type";
 	return query(sql);
+};
+
+// 获取任务列表总条数
+const taskListTotal = val => {
+
+	let where = getTaskListWhere(val);
+
+	let sql = "SELECT COUNT(*) as total FROM affair_record " + where;
+
+	return query(sql)
 };
 
 // 添加记录
@@ -155,6 +192,7 @@ const updateRecordItem = val => { // 修改一条任务
 
 module.exports = {
   list,
+  taskListTotal,
   recordTypeList,
   addRecordItem,
   removeRecordItem,

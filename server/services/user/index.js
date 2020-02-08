@@ -26,21 +26,21 @@ const {
 exports.login = async ctx => {
 
 	let res;
-      try {
-        const val = ctx.request.body;
-        await userController.login(val).then(result => {
-			
+  try {
+    const val = ctx.request.body;
+    await userController.login(val).then(result => {
+	
+      // 判断是否登录接口  存储用户信息到session
+      let userInfo = result[0] || {};
+      ctx.session[userInfo.pk] = userInfo;
 
-          // 判断是否登录接口  存储用户信息到session
-          let userInfo = result[0] || {};
-          ctx.session[userInfo.pk] = userInfo;
 
-          res = success(userInfo);
+      res = success(userInfo);
 		});
-      } catch(err) {
-        res = failed(err)
-      }
-      ctx.body = res
+  } catch(err) {
+    res = failed(err)
+  }
+  ctx.body = res
 };
 
 

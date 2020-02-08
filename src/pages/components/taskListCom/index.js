@@ -24,7 +24,10 @@ import {
 	Select,
 	DatePicker,
 	message,
+	Spin,
 } from 'antd';
+
+
 
 import dataPickerLocale from 'antd/es/date-picker/locale/zh_CN';
 
@@ -236,6 +239,7 @@ class TaskList extends PureComponent{
 				pageSize:10,
 				total:0
 			},
+			spinLoading:false,// Loading
 		};
 
 		this.addTaskOk = this.addTaskOk.bind(this);
@@ -318,6 +322,11 @@ class TaskList extends PureComponent{
 	}
 
 	fetchTaskList = () => { // 获取任务列表
+
+		// loading
+		this.setState({
+			spinLoading:true
+		});
 
 		let {
 			searchDepartment,
@@ -409,10 +418,15 @@ class TaskList extends PureComponent{
 
 			};
 
-			
+			this.setState({
+				spinLoading:false
+			});
 
 		}).catch(err => {
 
+			this.setState({
+				spinLoading:false
+			});
 		});
 
 	};
@@ -945,7 +959,8 @@ class TaskList extends PureComponent{
 			searchVal,
 			contentHeight,
 			addTaskData,
-			paginationData
+			paginationData,
+			spinLoading
 		} = this.state;
 
 		console.log(addTaskData);
@@ -980,344 +995,347 @@ class TaskList extends PureComponent{
 
 
 		return (
-			<TaskListWrapper>
-				{
-					// 任务即将超时提醒
-					overtimeTaskData.length > 0 ? (
-						<NoticeWrapper>
-							<Carousel
-								autoplay
-								dots={false}
-								speed= {20000}
-							    autoplaySpeed={10000}
-							    cssEase="linear"
-							    infinite={true}
-							>
-							    {
-
-							    	overtimeTaskData.map((item) => {
-
-							    		let task_content = item.task_content;
-
-							    		// 如果内容大于30个字符则将 取前30个
-							    		if(task_content.length > 30){
-							    			task_content = task_content.slice(0,30) + "......";
-							    		};
-
-							    		return (
-
-							    			<div className="notic-item" key={item.key}>
-							    				{item.publisher_person}  发布的 {task_content} 将于 {item.estimate_time} 超时
-							    			</div>
-							    		)
-
-							    	})
-							    }
-							  </Carousel>
-						</NoticeWrapper>
-					) : ""
-				}
-				
-				<HeaderNav>
-					<div className="header-item clearfix">
-						<div className="btns-wrapper fl">
-							{
-								finishList.map((item,index) => {
-
-									return (
-										<div className="btns-item" key={item.value}>
-											<Button 
-												type={this.state.finishStatus === item.value ? 'primary' : ''} 
-												size="small"
-												onClick={()=> this.switFinishStatusFn(item)}
-											>{item.label}</Button>
-										</div>
-									)
-								})
-
-							}
-						</div>
-
-						{
-							
-							/* 如果为任务列表才显示 */
-							taskPageMode == "all" ? (
-
-								<div className="filter-search-wr fl">
-									<div className="search-item">
-										<span className="tit">部门：</span>
-										<Select 
-											size="small"
-											value={searchDepartment}
-											onChange={this.changeSearchDepartment}
-											style={{width:"120px"}}
-										>
-											<Option key="不限" value="all">不限</Option>
-											{
-												departmentList.map(item => {
-													
-													return(
-														<Option key={item.pk} value={item.pk}>{item.name}</Option>
-													)
-
-												})
-											}
-										</Select>
-									</div>
-
-									<div className="search-item">
-										<span className="tit">发布人：</span>
-										<Select
-											size="small"
-											value={searchReleaseUser}
-											onChange={this.changeSearchReleaseUser}
-											style={{width:"100px"}}
-										>
-
-											<Option key="不限" value="all">不限</Option>
-											{
-											
-												userList.map(item => {
-
-													let opt = "";
-													
-													
-													// 只显示管理层
-													if(searchDepartment == "all"){
-														if(item.auth_pk == 2){
-															opt = <Option key={item.pk} value={item.pk}>{ item.username }</Option>
-														}
-													}else{
-														if(item.auth_pk == 2 && item.department_pk == searchDepartment){
-															opt = <Option key={item.pk} value={item.pk}>{ item.username }</Option>
-														}
-													}
-													return (opt);
-												})
-											}
-										</Select>
-									</div>
-
-									<div className="search-item">
-										<span className="tit">完成人：</span>
-										<Select
-											size="small"
-											value={searchFinishUser}
-											onChange={this.changeSearchFinishUser}
-											style={{width:"100px"}}
-										>
-
-											<Option key="不限" value="all">不限</Option>
-											{
-											
-												userList.map(item => {
-
-													let opt = "";
-
-													// 只显示管理层
-													if(searchDepartment == "all"){
-														opt = <Option key={item.pk} value={item.pk}>{ item.username }</Option>
-													}else{
-														if(item.department_pk == searchDepartment){
-															opt = <Option key={item.pk} value={item.pk}>{ item.username }</Option>
-														}
-													}
-
-													return (opt);
-												})
-											}
-										</Select>
-									</div>
-
-									<div className="search-item">
-										<span className="tit">项目：</span>
-										<Select 
-											size="small"
-											value={searchProject}
-											onChange={this.changeSearchProject}
-											style={{width:"140px"}}
-										>
-											<Option key="不限" value="all">不限</Option>
-											{
-												projectList.map(item => {
-
-													let opt = "";
-
-													if(searchDepartment == "all"){
-														opt = <Option key={item.pk} value={item.pk}>{item.name}</Option>
-													}else{
-														if(item.department_pk == searchDepartment || !item.department_pk){
-															opt = <Option key={item.pk} value={item.pk}>{item.name}</Option>
-														}
-													}
-													
-													return(
-														opt
-													)
-
-												})
-											}
-										</Select>
-									</div>
-
-									
-								</div>
-							) : ""
-						}
-
-
-						<div className="btns-right fr">
-							{
-								newUserInfo.auth_key == "admin" ? (
-									<Button className="btn-item" type="primary" size="small" onClick={this.showAddModal}>发布任务</Button>
-								) : ""
-							}
-							<Button className="btn-item" type="primary" size="small" onClick={this.exportTaskXlsx}>导出xlsx</Button>
-						
-						</div>
-
-						
-						
-					</div>
+			<Spin spinning={spinLoading} tip="Loading......">
+				<TaskListWrapper>
+					
 					{
-						taskPageMode == "all" ? (
-							<div className="header-item">
-								<div className="filter-search-wr">
+						// 任务即将超时提醒
+						overtimeTaskData.length > 0 ? (
+							<NoticeWrapper>
+								<Carousel
+									autoplay
+									dots={false}
+									speed= {20000}
+								    autoplaySpeed={10000}
+								    cssEase="linear"
+								    infinite={true}
+								>
+								    {
 
-									<div className="search-item">
-										<span className="tit">预计完成时间：</span>
-										<RangePicker
-											locale={dataPickerLocale}
-											style={{width:"270px"}}
-											size="small"
-											onChange={this.changeSearchEstimateTime}
-										></RangePicker>
-									</div>
+								    	overtimeTaskData.map((item) => {
 
-									<div className="search-item">
-										<span className="tit">完成时间：</span>
-										<RangePicker
-											locale={dataPickerLocale}
-											style={{width:"270px"}}
-											size="small"
-											onChange={this.changeSearchFinishTime}
-										></RangePicker>
-									</div>
+								    		let task_content = item.task_content;
 
-									<div className="search-item">
-										<span className="tit">搜索内容：</span>
-										<Input 
-											size="small"
-											style={{width:"262px"}}
-											value={searchVal}
-											onPressEnter={this.pressEnterSearchVal}
-											onChange={this.changeSearchVal}
-										></Input>
-									</div>
-								</div>
-							</div>
+								    		// 如果内容大于30个字符则将 取前30个
+								    		if(task_content.length > 30){
+								    			task_content = task_content.slice(0,30) + "......";
+								    		};
+
+								    		return (
+
+								    			<div className="notic-item" key={item.key}>
+								    				{item.publisher_person}  发布的 {task_content} 将于 {item.estimate_time} 超时
+								    			</div>
+								    		)
+
+								    	})
+								    }
+								  </Carousel>
+							</NoticeWrapper>
 						) : ""
-
 					}
 					
-				</HeaderNav>
-				<MainContent className={taskPageMode == 'all' ? 'act' : ''}>
-					<div className="main-content-wrapper" style={{height:contentHeight + 'px'}}>
-						<Table 
-							dataSource={taskListData} 
-							columns={this.state.columns} 
-							rowSelection={rowSelection} 
-							scroll={{ x: 2300,y:1500}}
-							pagination={paginationData}
-							onChange={this.tablePaginationChange}
-						/>
-					</div>
-					
-				</MainContent>
-					
-				{/* 添加任务模态框 */}
-				<Modal
-		          title={taskOperaModel == "add" ? "添加任务" : "编辑任务"}
-		          visible={this.state.addTaskModal}
-		          width="60%"
-		          maskClosable={false}
-		          onOk={this.addTaskOk}
-		          onCancel={this.addTaskCancel}
-		        >
-		         	<AddTaskForm 
-		         		onRef={this.onAddTaskForm}
-		         		addTaskFormFn={this.addTaskFormFn} 
-		         		addTaskFormSubmitUpdate={this.addTaskFormSubmitUpdate}
-		         		data={addTaskData}
-		         	/>
-		        </Modal>
+					<HeaderNav>
+						<div className="header-item clearfix">
+							<div className="btns-wrapper fl">
+								{
+									finishList.map((item,index) => {
 
-		    	{/* 完成提示框 */}
-		    	<Modal
-		          title="提示"
-		          visible={this.state.finishConfirmModel}
-		          onOk={this.finishConfirmModelOk}
-		          onCancel={this.finishConfirmModelCacel}
-		        >
-		          <p>{ this.state.finishConfirmData.content }</p>
-		          <p style={{display:this.state.finishConfirmData.is_finish == 3 && this.state.finishConfirmData.finish_leav_msg ? 'block' : 'none'}}>
-		          	完成留言： {this.state.finishConfirmData.finish_leav_msg}
-		          </p>
-		          <TextArea rows={4} value={this.state.finishConfirmData.finish_leav_msg} onChange={this.updateFinishLeavMsgVal}/>
-		        </Modal>
+										return (
+											<div className="btns-item" key={item.value}>
+												<Button 
+													type={this.state.finishStatus === item.value ? 'primary' : ''} 
+													size="small"
+													onClick={()=> this.switFinishStatusFn(item)}
+												>{item.label}</Button>
+											</div>
+										)
+									})
 
-		    	{/* 查看任务详情 */}
-		    	<Modal
-		          title="查看任务详情"
-		           width="60%"
-		          visible={this.state.showTaskModal}
-		          onOk={this.closeShowTaskModal}
-		          onCancel={this.closeShowTaskModal}
-		        >
-		          <Form {...formItemLayout}>
-					<FormItem label="发布人">
-						<Input value={showTaskModalData.publisher_person}/>
-					</FormItem>
-					<FormItem label="部门">
-						<Input value={showTaskModalData.department}/>
-					</FormItem>
-					<FormItem label="内容">
-						<TextArea value={showTaskModalData.task_content}/>
-					</FormItem>
-					<FormItem label="状态">
-						<Select value={showTaskModalData.urgent_status}>
-			          		<Option key="1" value={"1"}>紧急</Option>
-			          		<Option key="2" value={"2"}>一般</Option>
-			          		<Option key="3" value={"3"}>不急</Option>
-					    </Select>
-					</FormItem>
-					<FormItem label="所属项目">
-						<Input value={showTaskModalData.project_name}/>
-					</FormItem>
-					<FormItem label="发布时间">
-						<Input value={showTaskModalData.create_time}/>
-					</FormItem>
-					<FormItem label="预计完成时间">
-						<Input value={showTaskModalData.estimate_time}/>
-					</FormItem>
-					<FormItem label="完成时间">
-						<Input value={showTaskModalData.finish_time}/>
-					</FormItem>
-					<FormItem label="审核时间">
-						<Input value={showTaskModalData.examine_time}/>
-					</FormItem>
-					<FormItem label="完成人">
-						<Input value={showTaskModalData.finish_preson}/>
-					</FormItem>
-					<FormItem label="完成人留言">
-						<Input value={showTaskModalData.finish_leav_msg}/>
-					</FormItem>
-					<FormItem label="审核人留言">
-						<Input value={showTaskModalData.examine_leav_msg}/>
-					</FormItem>
-		          </Form>
-		        </Modal>
-			</TaskListWrapper>
+								}
+							</div>
+
+							{
+								
+								/* 如果为任务列表才显示 */
+								taskPageMode == "all" ? (
+
+									<div className="filter-search-wr fl">
+										<div className="search-item">
+											<span className="tit">部门：</span>
+											<Select 
+												size="small"
+												value={searchDepartment}
+												onChange={this.changeSearchDepartment}
+												style={{width:"120px"}}
+											>
+												<Option key="不限" value="all">不限</Option>
+												{
+													departmentList.map(item => {
+														
+														return(
+															<Option key={item.pk} value={item.pk}>{item.name}</Option>
+														)
+
+													})
+												}
+											</Select>
+										</div>
+
+										<div className="search-item">
+											<span className="tit">发布人：</span>
+											<Select
+												size="small"
+												value={searchReleaseUser}
+												onChange={this.changeSearchReleaseUser}
+												style={{width:"100px"}}
+											>
+
+												<Option key="不限" value="all">不限</Option>
+												{
+												
+													userList.map(item => {
+
+														let opt = "";
+														
+														
+														// 只显示管理层
+														if(searchDepartment == "all"){
+															if(item.auth_pk == 2){
+																opt = <Option key={item.pk} value={item.pk}>{ item.username }</Option>
+															}
+														}else{
+															if(item.auth_pk == 2 && item.department_pk == searchDepartment){
+																opt = <Option key={item.pk} value={item.pk}>{ item.username }</Option>
+															}
+														}
+														return (opt);
+													})
+												}
+											</Select>
+										</div>
+
+										<div className="search-item">
+											<span className="tit">完成人：</span>
+											<Select
+												size="small"
+												value={searchFinishUser}
+												onChange={this.changeSearchFinishUser}
+												style={{width:"100px"}}
+											>
+
+												<Option key="不限" value="all">不限</Option>
+												{
+												
+													userList.map(item => {
+
+														let opt = "";
+
+														// 只显示管理层
+														if(searchDepartment == "all"){
+															opt = <Option key={item.pk} value={item.pk}>{ item.username }</Option>
+														}else{
+															if(item.department_pk == searchDepartment){
+																opt = <Option key={item.pk} value={item.pk}>{ item.username }</Option>
+															}
+														}
+
+														return (opt);
+													})
+												}
+											</Select>
+										</div>
+
+										<div className="search-item">
+											<span className="tit">项目：</span>
+											<Select 
+												size="small"
+												value={searchProject}
+												onChange={this.changeSearchProject}
+												style={{width:"140px"}}
+											>
+												<Option key="不限" value="all">不限</Option>
+												{
+													projectList.map(item => {
+
+														let opt = "";
+
+														if(searchDepartment == "all"){
+															opt = <Option key={item.pk} value={item.pk}>{item.name}</Option>
+														}else{
+															if(item.department_pk == searchDepartment || !item.department_pk){
+																opt = <Option key={item.pk} value={item.pk}>{item.name}</Option>
+															}
+														}
+														
+														return(
+															opt
+														)
+
+													})
+												}
+											</Select>
+										</div>
+
+										
+									</div>
+								) : ""
+							}
+
+
+							<div className="btns-right fr">
+								{
+									newUserInfo.auth_key == "admin" ? (
+										<Button className="btn-item" type="primary" size="small" onClick={this.showAddModal}>发布任务</Button>
+									) : ""
+								}
+								<Button className="btn-item" type="primary" size="small" onClick={this.exportTaskXlsx}>导出xlsx</Button>
+							
+							</div>
+
+							
+							
+						</div>
+						{
+							taskPageMode == "all" ? (
+								<div className="header-item">
+									<div className="filter-search-wr">
+
+										<div className="search-item">
+											<span className="tit">预计完成时间：</span>
+											<RangePicker
+												locale={dataPickerLocale}
+												style={{width:"270px"}}
+												size="small"
+												onChange={this.changeSearchEstimateTime}
+											></RangePicker>
+										</div>
+
+										<div className="search-item">
+											<span className="tit">完成时间：</span>
+											<RangePicker
+												locale={dataPickerLocale}
+												style={{width:"270px"}}
+												size="small"
+												onChange={this.changeSearchFinishTime}
+											></RangePicker>
+										</div>
+
+										<div className="search-item">
+											<span className="tit">搜索内容：</span>
+											<Input 
+												size="small"
+												style={{width:"262px"}}
+												value={searchVal}
+												onPressEnter={this.pressEnterSearchVal}
+												onChange={this.changeSearchVal}
+											></Input>
+										</div>
+									</div>
+								</div>
+							) : ""
+
+						}
+						
+					</HeaderNav>
+					<MainContent className={taskPageMode == 'all' ? 'act' : ''}>
+						<div className="main-content-wrapper" style={{height:contentHeight + 'px'}}>
+							<Table 
+								dataSource={taskListData} 
+								columns={this.state.columns} 
+								rowSelection={rowSelection} 
+								scroll={{ x: 2300,y:1500}}
+								pagination={paginationData}
+								onChange={this.tablePaginationChange}
+							/>
+						</div>
+						
+					</MainContent>
+						
+					{/* 添加任务模态框 */}
+					<Modal
+			          title={taskOperaModel == "add" ? "添加任务" : "编辑任务"}
+			          visible={this.state.addTaskModal}
+			          width="60%"
+			          maskClosable={false}
+			          onOk={this.addTaskOk}
+			          onCancel={this.addTaskCancel}
+			        >
+			         	<AddTaskForm 
+			         		onRef={this.onAddTaskForm}
+			         		addTaskFormFn={this.addTaskFormFn} 
+			         		addTaskFormSubmitUpdate={this.addTaskFormSubmitUpdate}
+			         		data={addTaskData}
+			         	/>
+			        </Modal>
+
+			    	{/* 完成提示框 */}
+			    	<Modal
+			          title="提示"
+			          visible={this.state.finishConfirmModel}
+			          onOk={this.finishConfirmModelOk}
+			          onCancel={this.finishConfirmModelCacel}
+			        >
+			          <p>{ this.state.finishConfirmData.content }</p>
+			          <p style={{display:this.state.finishConfirmData.is_finish == 3 && this.state.finishConfirmData.finish_leav_msg ? 'block' : 'none'}}>
+			          	完成留言： {this.state.finishConfirmData.finish_leav_msg}
+			          </p>
+			          <TextArea rows={4} value={this.state.finishConfirmData.finish_leav_msg} onChange={this.updateFinishLeavMsgVal}/>
+			        </Modal>
+
+			    	{/* 查看任务详情 */}
+			    	<Modal
+			          title="查看任务详情"
+			           width="60%"
+			          visible={this.state.showTaskModal}
+			          onOk={this.closeShowTaskModal}
+			          onCancel={this.closeShowTaskModal}
+			        >
+			          <Form {...formItemLayout}>
+						<FormItem label="发布人">
+							<Input value={showTaskModalData.publisher_person}/>
+						</FormItem>
+						<FormItem label="部门">
+							<Input value={showTaskModalData.department}/>
+						</FormItem>
+						<FormItem label="内容">
+							<TextArea value={showTaskModalData.task_content}/>
+						</FormItem>
+						<FormItem label="状态">
+							<Select value={showTaskModalData.urgent_status}>
+				          		<Option key="1" value={"1"}>紧急</Option>
+				          		<Option key="2" value={"2"}>一般</Option>
+				          		<Option key="3" value={"3"}>不急</Option>
+						    </Select>
+						</FormItem>
+						<FormItem label="所属项目">
+							<Input value={showTaskModalData.project_name}/>
+						</FormItem>
+						<FormItem label="发布时间">
+							<Input value={showTaskModalData.create_time}/>
+						</FormItem>
+						<FormItem label="预计完成时间">
+							<Input value={showTaskModalData.estimate_time}/>
+						</FormItem>
+						<FormItem label="完成时间">
+							<Input value={showTaskModalData.finish_time}/>
+						</FormItem>
+						<FormItem label="审核时间">
+							<Input value={showTaskModalData.examine_time}/>
+						</FormItem>
+						<FormItem label="完成人">
+							<Input value={showTaskModalData.finish_preson}/>
+						</FormItem>
+						<FormItem label="完成人留言">
+							<Input value={showTaskModalData.finish_leav_msg}/>
+						</FormItem>
+						<FormItem label="审核人留言">
+							<Input value={showTaskModalData.examine_leav_msg}/>
+						</FormItem>
+			          </Form>
+			        </Modal>
+				</TaskListWrapper>
+			</Spin>
 		)
 	}
 }

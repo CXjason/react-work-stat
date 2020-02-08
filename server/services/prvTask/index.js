@@ -31,7 +31,51 @@ exports.taskList = async ctx => { // 获取 任务列表
 			formatDataTime(result,"end_time");
 
 			res = success(result);
+		});
+
+
+	}catch(err){
+
+		res = failed(err);
+	};
+
+	ctx.body = res;
+};
+
+exports.addTaskItem = async ctx => { // 添加任务 
+
+	let res;
+
+	try{
+
+		let val = ctx.request.body;
+		await taskController.addTaskItem(val).then(result => {
+
+			res = success(result);
 		})
+	}catch(err){
+
+		res = failed(err);
+	};
+
+	ctx.body = res;
+};
+
+exports.updateTaskItem = async ctx => {
+
+	let res;
+
+	try{
+
+		let val = ctx.request.body;
+
+		await taskController.updateTaskItem(val).then(result => {
+
+			res = success(result);
+
+		});
+
+
 	}catch(err){
 
 		res = failed(err);

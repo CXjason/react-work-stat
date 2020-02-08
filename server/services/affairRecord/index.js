@@ -18,12 +18,17 @@ exports.list = async ctx => { // 获取项目列表
 	try{
 
 		let val = ctx.request.body;
-		await affairRecordController.list(val).then(result => {
 
-			formatDataTime(result,"create_time");
+		// 获取列表数据
+		let taskListData = await affairRecordController.list(val);
 
-			res = success(result);
-		});
+		formatDataTime(taskListData,"create_time");
+
+		res = success(taskListData);
+
+		let total = await affairRecordController.taskListTotal(val)
+
+		res["total"] = total[0]["total"];
 
 	}catch(err){
 

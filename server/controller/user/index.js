@@ -39,6 +39,7 @@ const login = val => { // 登录
   const { username,password } = val;
   const sql = "select * from user where username=? and password=?";
   const sql_params = [username,password];
+
   return query(sql,sql_params);
 }
 
