@@ -8,20 +8,20 @@ const TYPES = require('../../enum');
 
 const moment = require("moment");
 
+const crytoFn = require("../../utils/cryptoTool.js");
+
+
 
 // 获取任务列表
 const taskList = val => {
 
 	let where = "";
 
-
-
 	for(let item in val){
 
 		where += item + "=" + val[item] + " and ";
 
 	};
-
 
 
 	// 条件
@@ -46,6 +46,10 @@ const addTaskItem = val => {
 	let status = 1;
 	let create_person_name = val.create_person_name || "";
 	let create_person_pk = val.create_person_pk || "";
+
+	if(task_content){
+		task_content = crytoFn.getEncAse192(task_content,crytoFn.crytoKey);
+	};
 
 	let sql = `INSERT INTO prv_task(
 				start_time,
@@ -75,9 +79,14 @@ const updateTaskItem = val => { // 修改一条任务
 	let start_time = val.start_time || "";
 	let end_time = val.end_time || "";
 	let task_content = val.task_content || "";
-	let status = 1;
+	let status = val.status || "";
 	let create_person_name = val.create_person_name || "";
 	let create_person_pk = val.create_person_pk || "";
+	let last_punch_time = val.last_punch_time || "";
+
+	if(task_content){
+		task_content = crytoFn.getEncAse192(task_content,crytoFn.crytoKey);
+	};
 
 	let keyArr = {
 		start_time,
@@ -85,7 +94,8 @@ const updateTaskItem = val => { // 修改一条任务
 		task_content,
 		status,
 		create_person_name,
-		create_person_pk
+		create_person_pk,
+		last_punch_time,
 	};
 
 	

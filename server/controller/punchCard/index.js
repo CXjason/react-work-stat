@@ -10,6 +10,34 @@ const moment = require("moment");
 
 
 
+// 获取任务列表
+const punchList = val => {
+
+	let where = "";
+
+	for(let item in val){
+
+		where += item + "=" + val[item] + " and ";
+
+	};
+
+
+	// 条件
+	if(where != ""){
+		// 去掉最后一个逗号
+		where = where.slice(0,-5);
+		where = "WHERE " + where;
+	};
+
+
+	const sql = "SELECT * FROM punch_card " + where + " ORDER BY create_time DESC";
+
+	return query(sql);
+	
+};
+
+
+
 const addPunchCard = val => {
 
 	let prv_task_pk = val.prv_task_pk || "";
@@ -42,5 +70,6 @@ const addPunchCard = val => {
 
 
 module.exports = {
+	punchList,
   addPunchCard,
 }

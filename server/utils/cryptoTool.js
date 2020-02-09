@@ -5,6 +5,9 @@
  * */
 //导入模块
 var crypto = require('crypto');
+
+//  key
+const crytoKey = "jason";
 /**
  * @aes192加密模块
  * @param str string 要加密的字符串
@@ -54,3 +57,6 @@ exports.getSha1 = function(str) {
     var res = sha1.digest("hex");  //加密后的值d
     return res;
 }
+
+// key值
+exports.crytoKey = crytoKey;

@@ -9,7 +9,8 @@ const { success, failed } = pojo;
 const taskController = require("../../controller/prvTask/index.js");
 const { 
 	formatDataTime,
-	otherLast
+	otherLast,
+	decryptArrData
 }  = require("../../utils/tools.js");
 
 
@@ -27,8 +28,11 @@ exports.taskList = async ctx => { // 获取 任务列表
 		await taskController.taskList(val).then(result => {
 
 			formatDataTime(result,"create_time");
-			formatDataTime(result,"start_time");
-			formatDataTime(result,"end_time");
+			formatDataTime(result,"start_time","YYYY-MM-DD");
+			formatDataTime(result,"end_time","YYYY-MM-DD");
+			formatDataTime(result,"last_punch_time","YYYY-MM-DD");
+
+			decryptArrData(result);
 
 			res = success(result);
 		});
@@ -52,6 +56,7 @@ exports.addTaskItem = async ctx => { // 添加任务
 		await taskController.addTaskItem(val).then(result => {
 
 			res = success(result);
+
 		})
 	}catch(err){
 

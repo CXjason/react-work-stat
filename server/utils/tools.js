@@ -1,6 +1,7 @@
 
 
 const moment = require("moment");
+const crytoFn = require("./cryptoTool.js");
 
 // 数据中格式化时间
 let formatDataTime = function(arrData,key,format="YYYY-MM-DD HH:mm:ss"){
@@ -57,6 +58,17 @@ let taskStatusToText = function(status){
 
 };
 
+// 任务计划数据解密
+let decryptArrData = function(arr){
+
+	arr.forEach(item => {
+
+		if(item.task_content){
+			item.task_content = crytoFn.getDecAse192(item.task_content,crytoFn.crytoKey);
+		}
+	});
+};
+
 
 
 
@@ -64,6 +76,7 @@ let taskStatusToText = function(status){
 exports.formatDataTime = formatDataTime;
 exports.otherLast = otherLast;
 exports.taskStatusToText = taskStatusToText;
+exports.decryptArrData = decryptArrData;
 
 
 
