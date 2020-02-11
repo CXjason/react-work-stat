@@ -28,7 +28,7 @@ router.post(apiPrefix+"/updateApp",async ctx => {
   	data:null
   };
 
-  if(appVersion != "1.0.1"){
+  if(appVersion != "1.0.0"){
 
   	var host = ctx.request.host
 

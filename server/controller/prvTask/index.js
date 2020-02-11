@@ -75,14 +75,18 @@ const addTaskItem = val => {
 };
 
 const updateTaskItem = val => { // 修改一条任务
- 
-	let start_time = val.start_time || "";
-	let end_time = val.end_time || "";
+
+	let start_time = val.start_time || null;
+	let end_time = val.end_time || null;
 	let task_content = val.task_content || "";
 	let status = val.status || "";
 	let create_person_name = val.create_person_name || "";
 	let create_person_pk = val.create_person_pk || "";
-	let last_punch_time = val.last_punch_time || "";
+	let last_punch_time = val.last_punch_time;
+
+	if(!val.last_punch_time || val.last_punch_time === "null"){
+		last_punch_time = null;
+	};
 
 	if(task_content){
 		task_content = crytoFn.getEncAse192(task_content,crytoFn.crytoKey);
