@@ -45,7 +45,7 @@ exports.login = async ctx => {
 
 
 
-exports.userList = async ctx => {
+exports.userList = async ctx => { // 获取用户列表
 
 	let res;
 	try{
@@ -65,3 +65,24 @@ exports.userList = async ctx => {
 
 	ctx.body = res;
 }
+
+exports.loginRecordAddItem = async ctx => { // 新增登录记录
+
+	let res;
+	try{
+
+		const val = ctx.request.body;
+		await userController.loginRecordAddItem(val).then(result => {
+
+			res = success(result);
+
+		})
+
+	}catch(err){
+		res = failed(err);
+	};
+
+	ctx.body = res;
+}
+
+

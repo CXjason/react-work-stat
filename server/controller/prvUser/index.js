@@ -23,8 +23,34 @@ const userList = val => {
 };
 
 
+// 新增登录记录
+const loginRecordAddItem = val => {
+
+	let username = val.username || "";
+	let user_pk = val.user_pk || "";
+	let create_time = moment().format("YYYY-MM-DD HH:mm:ss");
+
+
+	let sql = `INSERT INTO login_record(
+				username,
+				user_pk,
+				create_time
+			) VALUES (?,?,?)`;
+
+	let sqlParams = [
+				username,
+				user_pk,
+				create_time
+			];
+
+	return query(sql,sqlParams);
+};
+
+
+
 
 module.exports = {
   login,
   userList,
+  loginRecordAddItem,
 }

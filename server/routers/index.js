@@ -28,17 +28,19 @@ router.post(apiPrefix+"/updateApp",async ctx => {
   	data:null
   };
 
-  if(appVersion != "1.0.0"){
+  if(appVersion != "1.0.3"){
 
   	var host = ctx.request.host
 
   	res.data = {
   		update: true,  
-      wgtUrl: "http://" + host + "/wgt/__UNI__CAE4C1F.wgt",
+      msg:"有新版本是否更新(添加时光)",
+      wgtUrl: "http://" + host + "/wgt/rj1.0.3.wgt",
   	}
   }else{
   	res.data = {
-  		update: false,  
+  		update: false,
+      msg:"有新版本是否更新(更新请勿操作,添加时光)",
       wgtUrl: '',
   	}
   };
