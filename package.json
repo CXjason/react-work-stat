@@ -53,7 +53,7 @@
     "qs": "^6.7.0",
     "react": "^16.8.6",
     "react-app-polyfill": "^1.0.1",
-    "react-dev-utils": "^9.0.1",
+    "react-dev-utils": "^11.0.4",
     "react-dom": "^16.8.6",
     "react-keeper": "^2.1.12",
     "react-redux": "^7.1.0",
